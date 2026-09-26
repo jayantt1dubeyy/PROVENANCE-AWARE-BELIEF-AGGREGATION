@@ -1,0 +1,153 @@
+\section{Structural Limitations}
+\label{sec:theorems}
+
+\subsection{Nonnegative weights cannot invert a source}
+
+\begin{theorem}[Nonnegative-weight insufficiency]
+\label{thm:nonneg}
+Suppose sources use inversion-only conventions with full stability
+($\rho_s = 1$ for all $s$), and at least one source $j$ uses an inverted
+convention ($\sigma_j = -1$). Suppose there exists a message vector
+$X_{-j}$ from the remaining sources such that
+$\bigl|\sum_{s \neq j} \sigma_s \lambda_s X_s\bigr| < \lambda_j$.
+Then no rule in $\mathcal{A}_+$ agrees with the Bayes rule on all message
+vectors. Here $\mathcal{A}_+$ is the class of rules
+$\hat{y}(X) = \mathrm{sign}(\sum_s w_s X_s)$ with $w_s \geq 0$ fixed per
+source at decision time: the weights may be estimated from support data
+by any procedure, but they cannot depend on the current message vector
+or context.
+\end{theorem}
+
+\begin{proof}
+Consider the inversion-only regime, where the Bayes log-odds are
+$\mathrm{LO}(X) = \sum_s \sigma_s \lambda_s X_s$.
+Fix $X_{-j}$ satisfying the hypothesis and form the pair
+$X^{(1)} = (X_{-j}, -1)$, $X^{(2)} = (X_{-j}, +1)$, differing only in
+source $j$'s message. Writing $S = \sum_{s\neq j}\sigma_s\lambda_s X_s$,
+\[
+\mathrm{LO}(X^{(1)}) = S + \lambda_j > 0
+\quad\text{and}\quad
+\mathrm{LO}(X^{(2)}) = S - \lambda_j < 0,
+\]
+using $\sigma_j = -1$ and $|S| < \lambda_j$. Hence the Bayes decision is
+strictly \emph{decreasing} in $X_j$ on this pair: $+1$ then $-1$.
+
+Any rule $U \in \mathcal{A}_+$ computes
+$U(X) = \mathrm{sign}(\sum_s w_s X_s)$ with $w_s \geq 0$. Moving from
+$X^{(1)}$ to $X^{(2)}$ changes the score by $2w_j \geq 0$, so $U$ is
+\emph{non-decreasing} in $X_j$ and cannot reproduce the Bayes flip from
+$+1$ to $-1$. Contradiction.
+\end{proof}
+
+The argument is a monotonicity obstruction, and it is worth stating
+plainly what it rules out: the Bayes rule sometimes has to move
+\emph{against} a source's message, and no nonnegative weighting can ever do
+that. The hypothesis is sufficient rather than generic. It names concrete
+configurations where the failure bites, which is what an impossibility
+result is for. The cleanest witness is the single-source case: with
+$X_{-j}$ empty, $S = 0 < \lambda_j$ holds trivially, so a lone inverted
+source already defeats every nonnegative rule.
+
+\begin{corollary}
+In the inversion-only regime with full stability ($\rho_s = 1$), the
+signed class $\mathcal{A}$ contains the Bayes rule, attained at
+$v_s = \sigma_s \lambda_s$.
+\end{corollary}
+
+\subsection{Signed scalars cannot handle context-dependence}
+
+Allowing negative weights fixes inversion. It does not fix the deeper
+problem: when a source's convention conditions on context, the source's
+effective sign is itself a function of the context, and no single scalar
+can represent a function.
+
+\begin{theorem}[Scalar insufficiency for context-dependent conventions]
+\label{thm:scalar}
+Let $f_c(\cdot, a)$ be an involution in its message/reading argument.
+Suppose there exist contexts $a^{(1)} \neq a^{(2)}$ and an observable
+message $m$ such that $f_c(m, a^{(1)}) \neq f_c(m, a^{(2)})$.
+
+(a) There exist observations
+$x^{(1)} = (X_{-j}, X_j, a^{(1)})$ and
+$x^{(2)} = (X_{-j}, X_j, a^{(2)})$ sharing the same centered message vector
+$X = (X_{-j}, X_j)$, with $X_j = 2M_j - 1$, on which the Bayes decisions differ.
+
+(b) Consequently, no context-independent function of the message vector
+alone---in particular, no scalar weight $w_j$ independent of the current
+context $a$---can represent the Bayes-optimal contribution of source $j$
+across all observable contexts. A context-dependent weight $w_j(a)$ is a
+different function class, and is not ruled out.
+\end{theorem}
+
+\begin{proof}
+See Appendix~\ref{app:deferred-proofs}.
+\end{proof}
+
+\begin{remark}
+Part (a) does the real work: it exhibits a concrete convention class that
+forces an indistinguishability pair, and part (b) is then immediate. Two
+assumptions deserve to be explicit. First, the receiver \emph{observes}
+the context $a$; without that, context-dependent conventions are trivially
+undecodable. Second, the convention family is \emph{known} to the
+receiver; the theorem is about representational capacity, not discovery.
+The takeaway: context-dependence, not sign, is the fundamental obstacle.
+\end{remark}
+
+\subsection{Equal-reliability optimum}
+
+Lemma~\ref{lem:equalrel} quantifies the price of the monotonicity
+obstruction: with $p$ honest and $q$ inverted sources at reliability $r$
+and full stability, the Bayes accuracy counts all $p+q$ decoded readings,
+while the best unsigned rule attains only the honest-only analogue, i.e.\
+it optimally discards the inverted sources entirely (statement, proof, and
+a numerical illustration are in Appendix~\ref{app:deferred-proofs}).
+
+\subsection{The Bayesian aggregator is consistent}
+
+The results above say what \emph{fixed} rules cannot do. The natural
+question is whether the Bayesian aggregator of
+Section~\ref{sec:method}, which learns the convention instead of fixing a
+weight, actually finds the truth. It does, in the standard sense.
+
+\begin{theorem}[Posterior consistency]
+\label{thm:consistency}
+Fix a source with true parameters $\theta^* = (c^*, \rho^*, r^*)$ lying on
+the finite grid $\mathcal{C} \times \textsc{RhoGrid} \times \textsc{RGrid}$.
+Let $[\theta^*]$ be its observational-equivalence class: the grid points
+inducing the same distribution over support triples $(M, a, Y)$. Then, as
+$K \to \infty$,
+\[
+P([\theta^*] \mid \mathcal{D}_s) \xrightarrow{a.s.} 1,
+\]
+and the aggregator's predictive log-odds converge almost surely to the
+oracle log-odds (exact Bayes inference with known $\theta^*$).
+\end{theorem}
+
+\begin{proof}
+See Appendix~\ref{app:deferred-proofs}.
+\end{proof}
+
+\begin{remark}
+The theorem promises class concentration, not point identification, and
+the distinction is load-bearing: on our own grid, distinct parameters can
+be observationally identical. Under an inversion-only convention,
+$(\rho, r)$ enter the triple distribution only through the agreement
+probability $p = \rho(1-r) + (1-\rho)r$, so $(\rho, r) = (1.0, 0.55)$ and
+$(0.6, 0.75)$---both on-grid---induce identical support-triple
+distributions; under the identity convention, $\rho$ drops out of the
+likelihood entirely. What the posterior identifies is the triple
+distribution itself, and that is all the predictive needs: the query
+likelihood is the same conditional, constant across each equivalence
+class, so the predictive log-odds converge to the oracle's regardless.
+
+A caveat on scope: the theorem assumes $\theta^*$ lies exactly on the
+grid, while our simulations draw $\rho$ and $r$ continuously. Off-grid,
+the posterior concentrates on the KL-projection of the truth onto the grid
+\cite{berk1966}, and the predictive log-odds converge to the log-odds at
+that projection. The grid is fine enough ($\Delta\rho = 0.1$,
+$\Delta r = 0.05$) that the projection is close to the truth, which is why
+Experiment~C still traces the predicted trajectory: at $K = 50$ the
+Bayesian aggregator reaches $0.821 \pm 0.010$, essentially the expected
+reliability ceiling $\mathbb{E}[r] = 0.825$ under full convention
+stability (Section~\ref{sec:experiments}).
+\end{remark}

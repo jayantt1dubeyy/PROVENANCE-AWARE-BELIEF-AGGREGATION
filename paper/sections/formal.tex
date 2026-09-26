@@ -1,0 +1,88 @@
+\section{Problem Formulation}
+\label{sec:formal}
+
+The key modelling choice is that \emph{source identity is part of the
+generative process of the message}, not a label attached to it afterwards:
+each source encodes its internal reading through a source-specific
+\emph{convention} before transmitting, so what the receiver observes, and
+what it means, depends on who sent it and in what context.
+
+\subsection{Generative model}
+
+Let $Y \in \{0,1\}$ be the binary truth with uniform prior, and let there
+be $N$ sources. Each source $s$ is described by three parameters, and
+keeping them separate is the entire point of the model:
+
+\begin{itemize}
+\item A \textbf{convention} $c_s \in \mathcal{C}$: an involutive function
+$f_{c_s} : \{0,1\} \times \{0,1\}^d \to \{0,1\}$ mapping the source's
+internal reading and an observable context $a \in \{0,1\}^d$ to a message.
+Involution means $f_c(f_c(v,a),a) = v$: applying the convention twice
+recovers the reading, which is what makes decoding possible at all.
+\item A \textbf{stability} $\rho_s \in [0,1]$: the probability that the
+source applies its convention on any given transmission rather than
+reporting its reading directly.
+\item A \textbf{reliability} $r_s \in (1/2, 1)$: the probability that the
+source's internal reading equals the truth. This is the only quantity the
+trust literature estimates.
+\end{itemize}
+
+On each round, source $s$ draws reading $R_s = Y$ with probability
+$r_s$ (else $1-Y$), transmits $M_s = f_{c_s}(R_s, a)$ with probability
+$\rho_s$ (else $R_s$), and the receiver observes the message $M_s$ together
+with the context $a$.
+
+We work with the \textbf{centered message} $X_s = 2M_s - 1 \in \{-1,+1\}$,
+so that aggregation is sign-symmetric. Define the log-odds weight
+$\lambda_s = \log(r_s/(1-r_s)) > 0$ and, for inversion-only conventions,
+the convention sign $\sigma_s = +1$ for honest (identity) conventions and
+$\sigma_s = -1$ for inverted conventions.
+
+The full generative process for one round, with source parameters
+$\theta = \{(c_s, \rho_s, r_s)\}_{s=1}^N$ fixed, is:
+\begin{align}
+Y &\sim \mathrm{Bernoulli}(1/2) \\
+A_s &\sim P_A \quad \text{independently per source and round} \\
+R_s \mid Y &\sim \mathrm{Bernoulli}(r_s) \text{ on } \{Y\}, \text{ i.e.\ } P(R_s = Y \mid Y) = r_s \\
+B_s &\sim \mathrm{Bernoulli}(\rho_s) \\
+M_s &= \begin{cases} f_{c_s}(R_s, A_s), & B_s = 1 \\ R_s, & B_s = 0 \end{cases}
+\end{align}
+The receiver observes $(M_s, A_s)$ for each source. A \textbf{support set}
+of $K$ labelled triples $\{(M_s^{(k)}, A_s^{(k)}, Y^{(k)})\}_{k=1}^K$ per
+source is available for calibration; test queries are fresh draws from the
+same process with the same source parameters.
+
+\subsection{Context assumptions}
+
+The context $A_s$ is a $d$-bit vector ($d=2$ in all experiments), drawn
+i.i.d.\ from a fixed distribution $P_A$ independently per source, per
+round, and independently of the truth $Y$. It is observed without noise,
+and the support and test phases share the same $P_A$. No
+source chooses or influences the context. These assumptions matter for
+Theorem~\ref{thm:scalar}: $P_A$ must put positive mass on the convention's
+distinguishing inputs.
+
+\subsection{Aggregation classes}
+
+We compare two classes of aggregation rules. The \textbf{nonnegative-weight
+class}
+\begin{equation}
+\mathcal{A}_+ = \left\{ \hat{y}_w(X)
+= \mathrm{sign}\!\left(\sum_s w_s X_s\right) : w_s \geq 0 \right\}
+\end{equation}
+captures reliability weighting: each source contributes its (centered)
+message scaled by a nonnegative trust weight. The \textbf{signed class}
+\begin{equation}
+\mathcal{A} = \left\{ \hat{y}_v(X)
+= \mathrm{sign}\!\left(\sum_s v_s X_s\right) : v_s \in \mathbb{R} \right\}
+\end{equation}
+additionally allows negative weights, i.e.\ flipping a source's
+contribution. Both classes assign a single scalar per source, independent
+of context. In both classes, $\mathrm{sign}(0)$ is resolved by an
+independent fair coin, which makes the $\tfrac12$ tie credit in
+Lemma~\ref{lem:equalrel} exact.
+
+\textbf{Oracle.} The oracle knows the ground-truth parameters
+$(c_s, \rho_s, r_s)$ for every source and applies the Bayes-optimal
+aggregation rule directly. No learning, no inference. It is a reference
+upper bound, not a competitor.

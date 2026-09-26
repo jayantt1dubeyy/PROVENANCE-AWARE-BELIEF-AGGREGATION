@@ -1,0 +1,56 @@
+\section{Bayesian Latent-Convention Aggregator}
+\label{sec:method}
+
+The theorems say aggregation has to decode messages, not merely weight
+them. So we infer each source's latent parameters from a labelled
+\emph{support set} $\mathcal{D}_s = \{(M_i, a_i, Y_i)\}_{i=1}^K$ of past
+(message, context, truth) triples, and aggregate the resulting predictive
+log-odds.
+
+\textbf{Priors.} Independent uniform priors over the finite convention
+family $\mathcal{C}$ and over the discretised stability and reliability
+grids:
+\[
+c \sim \mathrm{Uniform}(\mathcal{C}), \quad
+\rho \sim \mathrm{Uniform}(\{0.5, 0.6, \ldots, 1.0\}),
+\]
+\[
+r \sim \mathrm{Uniform}(\{0.55, 0.60, \ldots, 0.95\}).
+\]
+The prior is discrete over exactly the grid the posterior is enumerated
+on, so there is no continuous-to-discrete mismatch.
+
+\textbf{Likelihood.} For a support example, let
+$A_i = \mathbb{1}[f_c(M_i, a_i) = Y_i]$ indicate that decoding the message
+through convention $c$ recovers the truth, and
+$B_i = \mathbb{1}[M_i = Y_i]$ indicate direct agreement. With
+$q_i = \rho A_i + (1-\rho) B_i$ the probability the transmitted symbol
+matches the truth under $(c,\rho)$,
+\begin{equation}
+P(\mathcal{D}_s \mid c, \rho, r)
+= \prod_{i=1}^K \big[(1-r) + (2r-1)\, q_i\big].
+\end{equation}
+
+\textbf{Posterior.} The posterior $P(c,\rho,r \mid \mathcal{D}_s)$ is
+computed by exact enumeration over the finite grid
+$\rho \in \{0.5, 0.6, \ldots, 1.0\}$ and
+$r \in \{0.55, 0.60, \ldots, 0.95\}$. This is a numerical grid
+approximation, not a closed-form posterior, and we make no claim to the
+contrary.
+
+\textbf{Prediction.} For a query $(M_q, a_q)$, the predictive log-odds are
+the log of the ratio of posterior-averaged likelihoods:
+\begin{equation}
+\mathrm{LO} =
+\log\frac{\sum_{c,\rho,r} P(c,\rho,r \mid \mathcal{D}_s)\,
+P(M_q \mid Y=1, c,\rho,r)}
+{\sum_{c,\rho,r} P(c,\rho,r \mid \mathcal{D}_s)\,
+P(M_q \mid Y=0, c,\rho,r)},
+\end{equation}
+and the aggregator predicts $\hat{Y} = 1$ iff $\mathrm{LO} > 0$. Note this
+is \emph{not} the posterior average of the parameter-conditional
+log-odds. The two differ by Jensen's inequality, and only the form above
+is the exact Bayesian predictive. In the multi-agent setting, per-source
+predictive log-odds are summed, which is exact under the
+conditional-independence assumption of Section~\ref{sec:formal}; the
+oracle below is defined there as well.

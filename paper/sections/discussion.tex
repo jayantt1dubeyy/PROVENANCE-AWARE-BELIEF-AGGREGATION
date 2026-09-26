@@ -1,0 +1,65 @@
+\section{Discussion}
+
+\subsection{Three claims}
+
+\textbf{Nonnegative source weighting is insufficient for the convention
+class studied here.} Theorem~\ref{thm:nonneg} proves it; the ablation in
+\S6.3 shows it. Anything that multiplies messages by nonnegative scalars
+inherits the failure, no matter how the scalars are estimated.
+
+\textbf{Signed scalars are necessary but not sufficient once conventions
+depend on context.} Theorem~\ref{thm:scalar} makes this precise: the
+effective sign of a source's contribution is a function of context, and no
+context-independent scalar can represent a function. The signed-to-context-conditioned
+gap in the ablation is the empirical fingerprint.
+
+\textbf{Explicit context conditioning recovers much of the lost
+performance, but Bayesian inference over the latent generative convention
+provides an additional advantage from uncertainty marginalisation.}
+\textsc{ContextConditioned} reaches $0.730$ against Bayes's $0.758$, and
+the EM ablation shows the gap decomposes into $2.6$ points from
+point-estimate versus posterior-averaging and $4.9$ points from hard
+decoding. Theorem~\ref{thm:consistency} shows the posterior concentrates
+on the observational-equivalence class of the truth as $K \to \infty$;
+Experiment~C traces that trajectory empirically. The diagnostic
+\textsc{MetaAttn+Dec}, given privileged decoded features, reaches $0.822$
+against Bayes's $0.758$, so the learned models' bottleneck is
+representational. Two further stress tests sharpen the claim. First, a
+discriminative source${}\times{}$context meta-learner
+(\textsc{CtxLogReg}, \S6.3) with the same support information reaches
+only $0.637$, below both \textsc{ContextConditioned} and Bayes:
+expressiveness without the right inductive bias does not help at $K=10$.
+Second, Experiment~H breaks the model's independence assumption with
+correlated source errors and finds Bayes hurt no more than the baselines
+or the oracle. With matched support information and modest capacity,
+building in the generative structure beats learning it from scratch.
+
+\subsection{What the results do not say}
+
+The benchmark is synthetic: a controlled binary task, involutive
+conventions, uniform priors, deterministic contexts. Real systems have
+continuous messages, non-involutive mappings, and structured contexts.
+None of our theorems depend on binarity in an essential way, but the
+experiments do not test beyond it. Correlated sources are now tested
+(Experiment~H finds no disproportionate harm), but the correlation form
+is one convenient choice, not an exhaustive study.
+
+The convention family is finite, and the Bayesian method assumes the
+candidate set is known. Open-world systems would need to grow the set
+adaptively. Experiment~G probes the incomplete-family case and finds smooth
+rather than catastrophic degradation, but a principled open-world extension
+is future work, not this paper.
+
+Posterior concentration is moderate at small $K$ and sharpens with support
+size, just as Theorem~\ref{thm:consistency} predicts.
+
+\subsection{Design implications}
+
+Two practical lessons. First, \emph{do not aggregate raw messages across
+heterogeneous sources}: averaging messages from agents with different
+conventions can do worse than chance. Second, \emph{calibrate before
+aggregating}: keep a support set per source and combine calibrated
+log-odds rather than raw messages. Reliability heterogeneity is about
+\emph{how often} a source is right; convention heterogeneity is about
+\emph{how} it maps readings to messages. A source can be perfectly
+reliable and completely unreadable.

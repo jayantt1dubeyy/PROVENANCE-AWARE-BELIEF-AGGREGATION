@@ -1,0 +1,13 @@
+\section{Conclusion}
+
+Scalar reliability weighting cannot implement the Bayes rule in two
+regimes: nonnegative weighting cannot invert a source (Theorem~1), and no
+context-independent scalar, of either sign, can represent a
+context-dependent convention (Theorem~2). The way out is to decode: our
+finite-grid Bayesian latent-convention aggregator outperforms the scalar
+baselines, is competitive with the learned calibrators we tested, and
+reaches within 4.0 points of the oracle at $N=12$---up to 38 points over
+naive averaging. It survives candidate-set misspecification gracefully
+and is not disproportionately hurt by correlated source errors. Source
+identity is not a reliability parameter bolted onto a message; it is part
+of the evidence-to-decision mapping.

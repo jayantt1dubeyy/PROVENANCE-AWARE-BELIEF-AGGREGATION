@@ -1,0 +1,22 @@
+\section{Limitations}
+
+Messages and truth are binary; the multi-class extension is not worked
+out, though nothing in the theorems looks essentially binary. The
+convention family is finite and fixed, and the aggregator assumes the
+candidate set is known; Experiment~G starts on misspecification but an
+adaptive, open-world candidate set is future work. Sources were assumed
+conditionally independent given the truth; Experiment~H breaks that
+assumption with correlated errors and finds the ranking preserved, but
+only one correlation structure was tested. Conventions are static;
+drifting codes would need online inference, which we do not attempt.
+
+The evaluation is synthetic throughout: no LLM debate, robot teams, or
+sensor fusion, and the benchmark is not a substitute. The statistics are
+exploratory over ten seeds---enough to tell stable gaps from noise, not
+enough for confirmatory claims.
+
+On the method: the grid is coarse ($\rho$ in steps of $0.1$, $r$ in steps
+of $0.05$), though a resolution sweep moves every headline number by at
+most $0.004$ (Appendix~\ref{app:robustness}); the priors are flat, and
+posterior concentration at small $K$ is moderate. The claim is about
+decoding versus weighting, not optimal grid design.

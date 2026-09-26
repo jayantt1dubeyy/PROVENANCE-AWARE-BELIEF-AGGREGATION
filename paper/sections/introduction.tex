@@ -1,0 +1,72 @@
+\section{Introduction}
+
+Consider a deceptively simple sentence: \emph{``The bridge is safe.''}
+Heard from a structural engineer, it licenses crossing. Heard from a
+five-year-old, it licenses nothing. Heard from an anonymous account, it
+licenses suspicion. The message is identical; the decision it supports is
+not. Something about the \emph{source} changes what the message means.
+
+Multi-agent systems meet this problem at scale. Agents exchange beliefs,
+recommendations, sensor readings, and every receiver must decide how much
+weight each message deserves. A substantial class of trust and reputation
+models represents source differences primarily through reliability or
+trust parameters, formalised as $\hat{y} = \mathrm{sign}(\sum_s w_s X_s)$
+with $w_s \geq 0$. Weighted voting, reliability-weighted averaging,
+trust-weighted fusion. The nonnegative weight is everywhere. We argue that
+reliability weighting is insufficient for this setting.
+
+The failure is in how messages are interpreted. Take a source that is
+perfectly reliable, its internal reading always matching the truth, but
+which reports through a private convention: it flips its reading, or XORs
+it with an observable context bit. Its messages are uninterpretable without
+the convention, and no nonnegative weight, however carefully estimated,
+repairs the aggregation. Reliability and convention are orthogonal. A
+source can be maximally trustworthy and still unreadable. We call the
+resulting problem \emph{convention heterogeneity}. It is distinct from the
+reliability heterogeneity the literature has studied.
+
+By \emph{provenance-aware} aggregation we mean rules that condition on
+source identity. The decision-theoretic value of provenance is the change
+in decision value from knowing who sent the message: with the source
+known, the receiver can decode through that source's convention; without
+it, the message may be uninterpretable. Reliability is not
+convention. Our impossibility theorems characterise regimes where source
+identity carries this decision value yet no scalar reliability rule can
+extract it, and our aggregator is a constructive method for extracting it.
+
+Our contributions are fivefold.
+\begin{enumerate}
+\item We formalise the problem as a structural causal model in which
+source identity is part of the message-generating process, with
+involutive conventions, a stability parameter, and reliability kept
+strictly separate.
+\item We prove that nonnegative source weights cannot implement the
+Bayes-optimal rule under inverted conventions whenever the inverted
+source's weight dominates the rest (the hypothesis of
+Theorem~\ref{thm:nonneg}).
+\item We prove that no context-independent scalar weight, of either
+sign, can implement the Bayes rule under context-dependent conventions
+(Theorem~\ref{thm:scalar}).
+\item We establish a consistency result: a Bayesian aggregator that
+infers each source's latent convention concentrates on the
+observational-equivalence class of the truth as evidence accumulates
+(Theorem~\ref{thm:consistency}), with a proof of the
+equal-reliability characterisation used along the way.
+\item We introduce a finite-grid Bayesian latent-convention aggregator
+that infers each source's convention, stability, and reliability from a
+labelled support set, and we evaluate it on a benchmark of eight
+involutive conventions and nine experiments.
+\end{enumerate}
+The Bayesian aggregator consistently outperforms the scalar baselines
+under the synthetic benchmark, with the clearest margins at high
+convention stability and in larger groups, and is competitive with a
+trained attention calibrator given identical support information. (The learned calibrator
+has a slight edge at $N=3$, which reverses by $N=8$; see \S6.6.)
+
+One clarification before we proceed. The benchmark is synthetic, the
+convention family finite, the statistics exploratory over ten seeds. Our
+claim is conditional but sharp: reliability and communication conventions
+are distinct latent variables, and aggregation methods that model only
+reliability cannot recover Bayes-optimal decisions when the convention
+changes what a message means. Reliability is not convention. Weighting
+evidence is not decoding evidence.

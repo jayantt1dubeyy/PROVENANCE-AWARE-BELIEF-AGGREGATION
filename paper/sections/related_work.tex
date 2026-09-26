@@ -1,0 +1,72 @@
+\section{Related Work}
+
+\subsection{Trust and reputation in multi-agent systems}
+
+The dominant paradigm for handling source differences is trust and
+reputation, and it is almost entirely about reliability. TRAVOS~\cite{teacy2006}
+estimates the probability that a source provides accurate information;
+the Beta reputation system maintains Bayesian posteriors over
+trustworthiness; FIRE, Regret, and BLADE extend the idea to witness
+reputation and roles. Every one of these models \emph{how often}
+a source is right, a scalar reliability parameter. That is the gap we work
+in: a source can be maximally reliable under every one of these
+frameworks and still be unreadable, because reliability and convention are
+different things.
+
+\subsection{Opinion dynamics and social learning}
+
+{\sloppy
+Classical opinion dynamics, DeGroot~\cite{degroot1974} and
+Friedkin--Johnsen~\cite{friedkin1999}, aggregate through nonnegative
+influence weights: exactly the class our Theorem~\ref{thm:nonneg} rules
+out for inverted conventions. Bayesian social learning~\cite{acemoglu2011}
+asks when networks converge to the truth, but takes the mapping from
+state to signal as fixed and common knowledge. We study what happens when
+that mapping is private, heterogeneous, and has to be inferred.
+\par}
+
+\subsection{Truth discovery}
+
+Truth discovery methods~\cite{dong2009,yin2008,pasternack2011} jointly
+estimate latent truth and source reliability from conflicting claims. Each
+source still gets a scalar weight, and the weights still determine the
+aggregation. Convention heterogeneity breaks this parameterisation from
+the inside: the correct ``weight'' of a source is not a scalar at all but
+a context-dependent decoding of the message. Truth discovery asks who to
+trust. We are asking what they meant.
+
+\subsection{Robust and adversarial aggregation}
+
+Byzantine-tolerant aggregation~\cite{blanchard2017} and defences against
+adversarial federated learning~\cite{yin2018} handle sources that actively
+try to corrupt the outcome. Our setting is different: nobody is attacking
+anyone. The sources are honest and often highly reliable; they simply
+speak in different conventions, so there is no attacker to detect. What
+remains is a decoding problem, and reliability scores cannot see it.
+
+\subsection{Information theory and pragmatics}
+
+The framing grew out of partial information
+decomposition~\cite{williams2010,bertschinger2014}: does source identity carry information beyond message
+content? What survived is decision-theoretic -- our theorems target
+decision rules directly, since statistically real information
+($I(X;S\mid M) > 0$) need not imply decision value. The intuition is old
+in pragmatics: Gricean implicature~\cite{grice1975} treats speaker
+identity and context as constitutive of meaning; our conventions are a
+minimal formal version of that insight.
+
+\subsection{Multi-agent LLM systems}
+
+Recent work on LLM agents has explored debate protocols~\cite{du2023debate,
+liang2023debate}, round-table deliberation~\cite{chen2024reconcile},
+multi-agent evaluation~\cite{chan2024chateval}, and layered aggregation of
+proposals~\cite{wang2024moa}. These frameworks model source differences
+through confidence scores, voting, or an aggregator model's judgement, and
+empirical studies find debate gains sensitive to protocol design and not
+always robust over simpler baselines~\cite{smit2024mad}. What they
+generally do not model is the possibility that agents encode readings
+through source-specific, context-dependent conventions. Our contribution
+relative to this literature is the impossibility results:
+Theorems~\ref{thm:nonneg} and~\ref{thm:scalar} show that when the mapping
+from readings to messages itself varies by source and context, the thing
+to learn is a decoder, not a weight.

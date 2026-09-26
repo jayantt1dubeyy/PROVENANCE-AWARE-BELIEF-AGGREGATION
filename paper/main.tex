@@ -1,0 +1,54 @@
+\documentclass[sigconf,nonacm]{acmart}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% microtype font expansion requires scalable fonts; disable expansion
+% when they are unavailable (avoids pdfTeX fatal error).
+\microtypesetup{expansion=false}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+
+\title{Provenance-Aware Belief Aggregation in Multi-Agent Communication Under Convention Heterogeneity}
+
+% Double-blind review version. For the camera-ready, replace the block
+% below with the identified author block (kept commented here).
+\author{Jayant Dubey}
+\affiliation{%
+  \institution{IMS Engineering College}
+  \country{India}
+}
+\email{dubeymaya787@gmail.com}
+
+\begin{document}
+
+\input{sections/abstract}
+\maketitle
+
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/formal}
+\input{sections/theorems}
+\input{sections/method}
+\input{sections/experiments}
+\input{sections/discussion}
+\input{sections/limitations}
+\input{sections/conclusion}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\input{sections/appendix}
+
+% Reproducibility statement placed after the references so it does not
+% count toward the main-matter page limit.
+\input{sections/reproducibility}
+
+\end{document}

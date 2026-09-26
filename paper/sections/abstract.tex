@@ -1,0 +1,34 @@
+\begin{abstract}
+The standard move in multi-agent systems is to weight messages by source
+reliability. We argue this answers the wrong question whenever reliability
+and communication convention are distinct latent variables. When agents
+report through \emph{source-specific conventions}, mappings from internal
+readings to messages that can invert the signal or transform it depending
+on context, the real difficulty is interpreting the message, and no
+reliability weight can fix a misinterpretation. We prove two structural
+limitations for the convention class studied here. First, no aggregation
+rule restricted to nonnegative source weights can implement the
+Bayes-optimal decision when a source uses an inverted convention whose
+Bayes weight outweighs the remaining sources' combined contribution (the
+hypothesis of Theorem~\ref{thm:nonneg}); higher reliability only makes the
+hypothesis easier to satisfy. Second, no rule assigning a single scalar
+weight per source, of either sign, can implement the Bayes rule when a
+source's effective sign depends on observable context. We complement these
+with a consistency result: a Bayesian aggregator that infers each source's
+latent convention from a support set concentrates on the
+observational-equivalence class of the truth as evidence accumulates, so
+its predictive log-odds converge to the oracle's. The lesson is to decode
+messages rather than weight them. We introduce a finite-grid Bayesian
+latent-convention aggregator and evaluate it on a benchmark of eight
+involutive conventions. Bayesian aggregation consistently outperforms the
+scalar baselines and is competitive with a trained attention calibrator
+given identical support information, with the clearest margins at high
+convention stability and in larger groups. In multi-agent consensus it
+improves group accuracy by up to 38.2 percentage points over naive
+averaging, finishing within 4.0 points of an oracle. All results are from
+a synthetic benchmark; we make no claim about multi-agent communication
+in general.
+\end{abstract}
+
+\keywords{multi-agent systems, source calibration, trust aggregation,
+latent-variable inference, collective decision-making}
