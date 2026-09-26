@@ -1,5 +1,12 @@
 # Provenance-Aware Belief Aggregation in Multi-Agent Communication
 
+<p>
+  <a href="paper/main.pdf"><img src="https://img.shields.io/badge/📄_Paper-PDF-red?style=flat-square" alt="Paper PDF"></a>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License">
+  <img src="https://img.shields.io/badge/Reproducible-10_seeds-blueviolet?style=flat-square" alt="Reproducible">
+</p>
+
 Code and data for the paper *"Provenance-Aware Belief Aggregation in
 Multi-Agent Communication Under Convention Heterogeneity"* (Jayant Dubey).
 
