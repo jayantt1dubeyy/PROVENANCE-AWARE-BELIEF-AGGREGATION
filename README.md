@@ -1,5 +1,6 @@
 # Provenance-Aware Belief Aggregation in Multi-Agent Communication
 
+> 🐼 New here? Start with the [beginner explainer](EXPLAINED_FOR_BEGINNERS.md) — plain language, one analogy, verified vs not-proved labels.
 <p>
   <a href="paper/main.pdf"><img src="https://img.shields.io/badge/📄_Paper-PDF-red?style=flat-square" alt="Paper PDF"></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
