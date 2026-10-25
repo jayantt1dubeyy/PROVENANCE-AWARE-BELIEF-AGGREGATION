@@ -1,0 +1,472 @@
+{
+ "experiment": "expb_plugin_ablations",
+ "protocol": {
+  "K": 10,
+  "Q": 30,
+  "n_ep": 30,
+  "rho_range": [
+   0.99,
+   1.0
+  ],
+  "rel_range": [
+   0.7,
+   0.95
+  ],
+  "s_eval": "seed*1000+1",
+  "seeds": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29
+  ]
+ },
+ "runtime_seconds": 34.18024301528931,
+ "per_seed": [
+  {
+   "seed": 0,
+   "acc": {
+    "Bayes": 0.767962962962963,
+    "GridMAP": 0.7472222222222222,
+    "PostMean": 0.7374074074074074,
+    "EMDecoder": 0.6731481481481482,
+    "EMDecoder_plugin": 0.7314814814814815,
+    "LogOddsScalar": 0.6148148148148148
+   },
+   "grid_map_recovery": 0.6166666666666667,
+   "em_map_recovery": 0.38333333333333336,
+   "n_sources": 180
+  },
+  {
+   "seed": 1,
+   "acc": {
+    "Bayes": 0.7514814814814815,
+    "GridMAP": 0.7466666666666667,
+    "PostMean": 0.7464814814814815,
+    "EMDecoder": 0.6955555555555556,
+    "EMDecoder_plugin": 0.7346296296296296,
+    "LogOddsScalar": 0.6087037037037037
+   },
+   "grid_map_recovery": 0.6,
+   "em_map_recovery": 0.4166666666666667,
+   "n_sources": 180
+  },
+  {
+   "seed": 2,
+   "acc": {
+    "Bayes": 0.7711111111111111,
+    "GridMAP": 0.769074074074074,
+    "PostMean": 0.7581481481481481,
+    "EMDecoder": 0.685,
+    "EMDecoder_plugin": 0.7414814814814815,
+    "LogOddsScalar": 0.6229629629629629
+   },
+   "grid_map_recovery": 0.6777777777777778,
+   "em_map_recovery": 0.4111111111111111,
+   "n_sources": 180
+  },
+  {
+   "seed": 3,
+   "acc": {
+    "Bayes": 0.7825925925925926,
+    "GridMAP": 0.7692592592592593,
+    "PostMean": 0.7677777777777778,
+    "EMDecoder": 0.7037037037037037,
+    "EMDecoder_plugin": 0.7455555555555555,
+    "LogOddsScalar": 0.6431481481481481
+   },
+   "grid_map_recovery": 0.7,
+   "em_map_recovery": 0.42777777777777776,
+   "n_sources": 180
+  },
+  {
+   "seed": 4,
+   "acc": {
+    "Bayes": 0.742037037037037,
+    "GridMAP": 0.7405555555555555,
+    "PostMean": 0.7394444444444445,
+    "EMDecoder": 0.6694444444444444,
+    "EMDecoder_plugin": 0.7131481481481482,
+    "LogOddsScalar": 0.6185185185185185
+   },
+   "grid_map_recovery": 0.6444444444444445,
+   "em_map_recovery": 0.37222222222222223,
+   "n_sources": 180
+  },
+  {
+   "seed": 5,
+   "acc": {
+    "Bayes": 0.7557407407407407,
+    "GridMAP": 0.7344444444444445,
+    "PostMean": 0.7242592592592593,
+    "EMDecoder": 0.6759259259259259,
+    "EMDecoder_plugin": 0.7307407407407407,
+    "LogOddsScalar": 0.6033333333333334
+   },
+   "grid_map_recovery": 0.6055555555555555,
+   "em_map_recovery": 0.43333333333333335,
+   "n_sources": 180
+  },
+  {
+   "seed": 6,
+   "acc": {
+    "Bayes": 0.7312962962962963,
+    "GridMAP": 0.7396296296296296,
+    "PostMean": 0.7381481481481481,
+    "EMDecoder": 0.6672222222222223,
+    "EMDecoder_plugin": 0.7231481481481481,
+    "LogOddsScalar": 0.637962962962963
+   },
+   "grid_map_recovery": 0.6333333333333333,
+   "em_map_recovery": 0.3111111111111111,
+   "n_sources": 180
+  },
+  {
+   "seed": 7,
+   "acc": {
+    "Bayes": 0.757962962962963,
+    "GridMAP": 0.7394444444444445,
+    "PostMean": 0.7381481481481481,
+    "EMDecoder": 0.6842592592592592,
+    "EMDecoder_plugin": 0.7364814814814815,
+    "LogOddsScalar": 0.6342592592592593
+   },
+   "grid_map_recovery": 0.5777777777777777,
+   "em_map_recovery": 0.34444444444444444,
+   "n_sources": 180
+  },
+  {
+   "seed": 8,
+   "acc": {
+    "Bayes": 0.7655555555555555,
+    "GridMAP": 0.7609259259259259,
+    "PostMean": 0.7603703703703704,
+    "EMDecoder": 0.7005555555555556,
+    "EMDecoder_plugin": 0.7387037037037038,
+    "LogOddsScalar": 0.6357407407407407
+   },
+   "grid_map_recovery": 0.6333333333333333,
+   "em_map_recovery": 0.36666666666666664,
+   "n_sources": 180
+  },
+  {
+   "seed": 9,
+   "acc": {
+    "Bayes": 0.7503703703703704,
+    "GridMAP": 0.7390740740740741,
+    "PostMean": 0.7396296296296296,
+    "EMDecoder": 0.6744444444444444,
+    "EMDecoder_plugin": 0.720925925925926,
+    "LogOddsScalar": 0.6346296296296297
+   },
+   "grid_map_recovery": 0.6333333333333333,
+   "em_map_recovery": 0.4,
+   "n_sources": 180
+  },
+  {
+   "seed": 10,
+   "acc": {
+    "Bayes": 0.7672222222222222,
+    "GridMAP": 0.7701851851851852,
+    "PostMean": 0.7731481481481481,
+    "EMDecoder": 0.7135185185185186,
+    "EMDecoder_plugin": 0.7438888888888889,
+    "LogOddsScalar": 0.6018518518518519
+   },
+   "grid_map_recovery": 0.6888888888888889,
+   "em_map_recovery": 0.4222222222222222,
+   "n_sources": 180
+  },
+  {
+   "seed": 11,
+   "acc": {
+    "Bayes": 0.7712962962962963,
+    "GridMAP": 0.7535185185185185,
+    "PostMean": 0.7464814814814815,
+    "EMDecoder": 0.6757407407407408,
+    "EMDecoder_plugin": 0.735,
+    "LogOddsScalar": 0.627962962962963
+   },
+   "grid_map_recovery": 0.5944444444444444,
+   "em_map_recovery": 0.35555555555555557,
+   "n_sources": 180
+  },
+  {
+   "seed": 12,
+   "acc": {
+    "Bayes": 0.7614814814814815,
+    "GridMAP": 0.7661111111111111,
+    "PostMean": 0.7572222222222222,
+    "EMDecoder": 0.6938888888888889,
+    "EMDecoder_plugin": 0.7512962962962964,
+    "LogOddsScalar": 0.6174074074074074
+   },
+   "grid_map_recovery": 0.65,
+   "em_map_recovery": 0.4222222222222222,
+   "n_sources": 180
+  },
+  {
+   "seed": 13,
+   "acc": {
+    "Bayes": 0.7692592592592593,
+    "GridMAP": 0.7683333333333333,
+    "PostMean": 0.7618518518518519,
+    "EMDecoder": 0.6938888888888889,
+    "EMDecoder_plugin": 0.7461111111111111,
+    "LogOddsScalar": 0.6157407407407407
+   },
+   "grid_map_recovery": 0.6444444444444445,
+   "em_map_recovery": 0.4166666666666667,
+   "n_sources": 180
+  },
+  {
+   "seed": 14,
+   "acc": {
+    "Bayes": 0.7546296296296297,
+    "GridMAP": 0.7418518518518519,
+    "PostMean": 0.7377777777777778,
+    "EMDecoder": 0.672037037037037,
+    "EMDecoder_plugin": 0.7211111111111111,
+    "LogOddsScalar": 0.6151851851851852
+   },
+   "grid_map_recovery": 0.6388888888888888,
+   "em_map_recovery": 0.34444444444444444,
+   "n_sources": 180
+  },
+  {
+   "seed": 15,
+   "acc": {
+    "Bayes": 0.7440740740740741,
+    "GridMAP": 0.7329629629629629,
+    "PostMean": 0.7285185185185186,
+    "EMDecoder": 0.6955555555555556,
+    "EMDecoder_plugin": 0.73,
+    "LogOddsScalar": 0.6125925925925926
+   },
+   "grid_map_recovery": 0.5388888888888889,
+   "em_map_recovery": 0.37777777777777777,
+   "n_sources": 180
+  },
+  {
+   "seed": 16,
+   "acc": {
+    "Bayes": 0.7542592592592593,
+    "GridMAP": 0.7525925925925926,
+    "PostMean": 0.7501851851851852,
+    "EMDecoder": 0.6957407407407408,
+    "EMDecoder_plugin": 0.7387037037037038,
+    "LogOddsScalar": 0.6090740740740741
+   },
+   "grid_map_recovery": 0.6388888888888888,
+   "em_map_recovery": 0.37777777777777777,
+   "n_sources": 180
+  },
+  {
+   "seed": 17,
+   "acc": {
+    "Bayes": 0.7490740740740741,
+    "GridMAP": 0.7437037037037038,
+    "PostMean": 0.7409259259259259,
+    "EMDecoder": 0.6785185185185185,
+    "EMDecoder_plugin": 0.7292592592592593,
+    "LogOddsScalar": 0.6174074074074074
+   },
+   "grid_map_recovery": 0.6388888888888888,
+   "em_map_recovery": 0.40555555555555556,
+   "n_sources": 180
+  },
+  {
+   "seed": 18,
+   "acc": {
+    "Bayes": 0.7659259259259259,
+    "GridMAP": 0.7581481481481481,
+    "PostMean": 0.757962962962963,
+    "EMDecoder": 0.6866666666666666,
+    "EMDecoder_plugin": 0.7318518518518519,
+    "LogOddsScalar": 0.6090740740740741
+   },
+   "grid_map_recovery": 0.6611111111111111,
+   "em_map_recovery": 0.40555555555555556,
+   "n_sources": 180
+  },
+  {
+   "seed": 19,
+   "acc": {
+    "Bayes": 0.755,
+    "GridMAP": 0.7461111111111111,
+    "PostMean": 0.7407407407407407,
+    "EMDecoder": 0.6688888888888889,
+    "EMDecoder_plugin": 0.7227777777777777,
+    "LogOddsScalar": 0.6183333333333333
+   },
+   "grid_map_recovery": 0.65,
+   "em_map_recovery": 0.40555555555555556,
+   "n_sources": 180
+  },
+  {
+   "seed": 20,
+   "acc": {
+    "Bayes": 0.7507407407407407,
+    "GridMAP": 0.7564814814814815,
+    "PostMean": 0.7531481481481481,
+    "EMDecoder": 0.677962962962963,
+    "EMDecoder_plugin": 0.7394444444444445,
+    "LogOddsScalar": 0.6366666666666667
+   },
+   "grid_map_recovery": 0.6944444444444444,
+   "em_map_recovery": 0.36666666666666664,
+   "n_sources": 180
+  },
+  {
+   "seed": 21,
+   "acc": {
+    "Bayes": 0.7498148148148148,
+    "GridMAP": 0.7424074074074074,
+    "PostMean": 0.7381481481481481,
+    "EMDecoder": 0.6781481481481482,
+    "EMDecoder_plugin": 0.720925925925926,
+    "LogOddsScalar": 0.6246296296296296
+   },
+   "grid_map_recovery": 0.6055555555555555,
+   "em_map_recovery": 0.32222222222222224,
+   "n_sources": 180
+  },
+  {
+   "seed": 22,
+   "acc": {
+    "Bayes": 0.7625925925925926,
+    "GridMAP": 0.7512962962962964,
+    "PostMean": 0.7487037037037036,
+    "EMDecoder": 0.6801851851851852,
+    "EMDecoder_plugin": 0.7368518518518519,
+    "LogOddsScalar": 0.6401851851851852
+   },
+   "grid_map_recovery": 0.6555555555555556,
+   "em_map_recovery": 0.4,
+   "n_sources": 180
+  },
+  {
+   "seed": 23,
+   "acc": {
+    "Bayes": 0.7485185185185185,
+    "GridMAP": 0.752962962962963,
+    "PostMean": 0.7568518518518519,
+    "EMDecoder": 0.6898148148148148,
+    "EMDecoder_plugin": 0.7316666666666667,
+    "LogOddsScalar": 0.6181481481481481
+   },
+   "grid_map_recovery": 0.6666666666666666,
+   "em_map_recovery": 0.4388888888888889,
+   "n_sources": 180
+  },
+  {
+   "seed": 24,
+   "acc": {
+    "Bayes": 0.7568518518518519,
+    "GridMAP": 0.7555555555555555,
+    "PostMean": 0.7459259259259259,
+    "EMDecoder": 0.6877777777777778,
+    "EMDecoder_plugin": 0.7374074074074074,
+    "LogOddsScalar": 0.6174074074074074
+   },
+   "grid_map_recovery": 0.6,
+   "em_map_recovery": 0.3611111111111111,
+   "n_sources": 180
+  },
+  {
+   "seed": 25,
+   "acc": {
+    "Bayes": 0.7707407407407407,
+    "GridMAP": 0.762962962962963,
+    "PostMean": 0.7575925925925926,
+    "EMDecoder": 0.7005555555555556,
+    "EMDecoder_plugin": 0.7392592592592593,
+    "LogOddsScalar": 0.6148148148148148
+   },
+   "grid_map_recovery": 0.65,
+   "em_map_recovery": 0.4222222222222222,
+   "n_sources": 180
+  },
+  {
+   "seed": 26,
+   "acc": {
+    "Bayes": 0.7581481481481481,
+    "GridMAP": 0.7551851851851852,
+    "PostMean": 0.7505555555555555,
+    "EMDecoder": 0.7046296296296296,
+    "EMDecoder_plugin": 0.7414814814814815,
+    "LogOddsScalar": 0.6211111111111111
+   },
+   "grid_map_recovery": 0.6555555555555556,
+   "em_map_recovery": 0.43333333333333335,
+   "n_sources": 180
+  },
+  {
+   "seed": 27,
+   "acc": {
+    "Bayes": 0.765,
+    "GridMAP": 0.7598148148148148,
+    "PostMean": 0.7614814814814815,
+    "EMDecoder": 0.7007407407407408,
+    "EMDecoder_plugin": 0.7279629629629629,
+    "LogOddsScalar": 0.6122222222222222
+   },
+   "grid_map_recovery": 0.6555555555555556,
+   "em_map_recovery": 0.4111111111111111,
+   "n_sources": 180
+  },
+  {
+   "seed": 28,
+   "acc": {
+    "Bayes": 0.7540740740740741,
+    "GridMAP": 0.7438888888888889,
+    "PostMean": 0.735,
+    "EMDecoder": 0.6644444444444444,
+    "EMDecoder_plugin": 0.7264814814814815,
+    "LogOddsScalar": 0.6177777777777778
+   },
+   "grid_map_recovery": 0.6388888888888888,
+   "em_map_recovery": 0.35555555555555557,
+   "n_sources": 180
+  },
+  {
+   "seed": 29,
+   "acc": {
+    "Bayes": 0.7859259259259259,
+    "GridMAP": 0.7898148148148149,
+    "PostMean": 0.7909259259259259,
+    "EMDecoder": 0.7229629629629629,
+    "EMDecoder_plugin": 0.7620370370370371,
+    "LogOddsScalar": 0.6190740740740741
+   },
+   "grid_map_recovery": 0.7055555555555556,
+   "em_map_recovery": 0.4777777777777778,
+   "n_sources": 180
+  }
+ ]
+}

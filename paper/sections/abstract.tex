@@ -8,26 +8,52 @@ on context, the real difficulty is interpreting the message, and no
 reliability weight can fix a misinterpretation. We prove two structural
 limitations for the convention class studied here. First, no aggregation
 rule restricted to nonnegative source weights can implement the
-Bayes-optimal decision when a source uses an inverted convention whose
-Bayes weight outweighs the remaining sources' combined contribution (the
-hypothesis of Theorem~\ref{thm:nonneg}); higher reliability only makes the
-hypothesis easier to satisfy. Second, no rule assigning a single scalar
-weight per source, of either sign, can implement the Bayes rule when a
-source's effective sign depends on observable context. We complement these
+Bayes-optimal decision when an inverted source's Bayes weight exceeds
+the realized combined contribution of the remaining sources on some
+message vector (the hypothesis of Theorem~\ref{thm:nonneg}); the
+inverted source's own reliability strengthens the condition, the other
+sources' works against it. Second, no rule assigning a single
+context-independent scalar weight per source can reproduce a source's
+Bayes log-odds contribution when its convention flips across
+observable contexts (any stability $\rho > 0$); when $\rho > 1/2$ the
+effective sign itself flips with context, and such rules fail on
+decisions as well (Theorem~\ref{thm:scalar}). We complement these
 with a consistency result: a Bayesian aggregator that infers each source's
 latent convention from a support set concentrates on the
 observational-equivalence class of the truth as evidence accumulates, so
-its predictive log-odds converge to the oracle's. The lesson is to decode
-messages rather than weight them. We introduce a finite-grid Bayesian
+its predictive log-odds converge to the oracle's. We introduce a finite-grid Bayesian
 latent-convention aggregator and evaluate it on a benchmark of eight
 involutive conventions. Bayesian aggregation consistently outperforms the
-scalar baselines and is competitive with a trained attention calibrator
-given identical support information, with the clearest margins at high
-convention stability and in larger groups. In multi-agent consensus it
-improves group accuracy by up to 38.2 percentage points over naive
-averaging, finishing within 4.0 points of an oracle. All results are from
-a synthetic benchmark; we make no claim about multi-agent communication
-in general.
+scalar baselines and matches or exceeds the learned calibrators we tested
+(each in a single, untuned configuration) given identical support
+information---a transformer meta-learner with $4.1\times$ the attention
+baseline's parameters finishes within half a point, a small but
+statistically detectable deficit, while a decoder-privileged diagnostic
+nearly reaches the oracle---with the clearest margins at high convention
+stability and in larger groups. In multi-agent consensus it improves group accuracy by
+37.5 percentage points over naive averaging (twelve agents), finishing
+within 4.3 points of an oracle. We also report calibration (negative
+log-likelihood, Brier score, expected calibration error): the Bayesian
+posterior scores best probabilistically but grows overconfident as
+conventions stabilise, a limitation. A new
+stability-boundary experiment maps when per-source decoding helps versus
+hurts: at low convention stability ($\rho=0.5$) a population-average
+mapping beats per-source Bayesian decoding (paired $+0.0196$ at $K=10$),
+with the advantage shrinking as support grows and vanishing at $K=50$;
+at $\rho \geq 0.6$ decoding wins decisively. A post-repair
+validation programme adds three further evidence types: controlled
+panels reproducing the mechanism with a dose--response in measured
+heterogeneity; real human judgments (CrowdTruth medical relation
+tasks) in which per-source behaviour measurably flips across
+contexts (37\% of workers sign-flip between relation families) and a
+calibrated context-decoding estimator beats the best calibrated
+scalar on accuracy, log loss and calibration error across two
+tasks; and an adversarial suite pricing the assumptions---under a
+convention switch between support and query, every support-based
+method collapses to chance. On CIFAR-10H, majority vote is already
+near ceiling and source modelling gains nothing---a boundary
+condition. We make no claim about multi-agent communication in
+general.
 \end{abstract}
 
 \keywords{multi-agent systems, source calibration, trust aggregation,

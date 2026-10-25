@@ -1,0 +1,266 @@
+% references_verified.bib
+% Verified replacement / new entries for ~/workspace/pvi-paper/paper/references.bib
+% Produced 21 Oct 2026 for the PVI audit-repair pass.
+% Every entry below was confirmed against a real source actually opened or a
+% search result showing the full citation (publisher page, DBLP, PMLR,
+% Crossref publisher metadata, journal site, or the paper itself).
+% See references_notes.md in this folder for the per-entry source URLs.
+% Keys for entries that already exist in references.bib are kept identical
+% (yin2018, blanchard2017, dong2009, grice1975, smit2024mad) so in-text
+% citations do not break. Paste over / alongside the old entries.
+
+% ---------------------------------------------------------------------------
+% 1. Dawid & Skene 1979 -- NEW (foundational crowdsourcing paper)
+% ---------------------------------------------------------------------------
+@article{dawid1979,
+  author  = {Dawid, A. Philip and Skene, Allan M.},
+  title   = {Maximum Likelihood Estimation of Observer Error-Rates Using the {EM} Algorithm},
+  journal = {Journal of the Royal Statistical Society. Series C (Applied Statistics)},
+  volume  = {28},
+  number  = {1},
+  pages   = {20--28},
+  year    = {1979},
+  doi     = {10.2307/2346806}
+}
+
+% ---------------------------------------------------------------------------
+% 2. Whitehill et al. 2009 (GLAD) -- NEW
+%    Author order as printed on the paper: Whitehill, Ruvolo, Wu, Bergsma, Movellan.
+% ---------------------------------------------------------------------------
+@inproceedings{whitehill2009glad,
+  author    = {Whitehill, Jacob and Ruvolo, Paul and Wu, Tingfan and Bergsma, Jacob and Movellan, Javier R.},
+  title     = {Whose Vote Should Count More: Optimal Integration of Labels from Labelers of Unknown Expertise},
+  booktitle = {Advances in Neural Information Processing Systems 22 (NeurIPS 2009)},
+  pages     = {2035--2043},
+  year      = {2009}
+}
+
+% ---------------------------------------------------------------------------
+% 3. Raykar et al. 2010 -- NEW
+% ---------------------------------------------------------------------------
+@article{raykar2010,
+  author  = {Raykar, Vikas C. and Yu, Shipeng and Zhao, Linda H. and Valadez, Gerardo Hermosillo and Florin, Charles and Bogoni, Luca and Moy, Linda},
+  title   = {Learning From Crowds},
+  journal = {Journal of Machine Learning Research},
+  volume  = {11},
+  pages   = {1297--1322},
+  year    = {2010}
+}
+
+% ---------------------------------------------------------------------------
+% 4. Raykar & Yu 2012 -- NEW
+%    NOTE: the real title ends "...for Crowdsourced Labeling Tasks"
+%    (not "...on Crowdsourcing Websites", as the task brief guessed).
+% ---------------------------------------------------------------------------
+@article{raykar2012,
+  author  = {Raykar, Vikas C. and Yu, Shipeng},
+  title   = {Eliminating Spammers and Ranking Annotators for Crowdsourced Labeling Tasks},
+  journal = {Journal of Machine Learning Research},
+  volume  = {13},
+  pages   = {491--518},
+  year    = {2012}
+}
+
+% ---------------------------------------------------------------------------
+% 5. Kim & Ghahramani 2012 (IBCC) -- NEW
+%    Pages DO exist: PMLR 22:619--627 (the audit's "could not verify" was
+%    overly cautious -- see notes).
+% ---------------------------------------------------------------------------
+@inproceedings{kim2012ibcc,
+  author    = {Kim, Hyun-Chul and Ghahramani, Zoubin},
+  title     = {Bayesian Classifier Combination},
+  booktitle = {Proceedings of the 15th International Conference on Artificial Intelligence and Statistics (AISTATS 2012)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {22},
+  pages     = {619--627},
+  year      = {2012}
+}
+
+% ---------------------------------------------------------------------------
+% 6. Zhao et al. 2012 -- NEW
+%    NOTE: issue is PVLDB 5(6), not 5(7) -- see notes.
+% ---------------------------------------------------------------------------
+@article{zhao2012bayesian,
+  author  = {Zhao, Bo and Rubinstein, Benjamin I. P. and Gemmell, Jim and Han, Jiawei},
+  title   = {A Bayesian Approach to Discovering Truth from Conflicting Sources for Data Integration},
+  journal = {Proceedings of the VLDB Endowment},
+  volume  = {5},
+  number  = {6},
+  pages   = {550--561},
+  year    = {2012}
+}
+
+% ---------------------------------------------------------------------------
+% 7. Natarajan et al. 2013 -- NEW
+% ---------------------------------------------------------------------------
+@inproceedings{natarajan2013,
+  author    = {Natarajan, Nagarajan and Dhillon, Inderjit S. and Ravikumar, Pradeep K. and Tewari, Ambuj},
+  title     = {Learning with Noisy Labels},
+  booktitle = {Advances in Neural Information Processing Systems 26 (NeurIPS 2013)},
+  pages     = {1196--1204},
+  year      = {2013}
+}
+
+% ---------------------------------------------------------------------------
+% 8. Patrini et al. 2017 -- NEW
+%    PAGE CONFLICT, resolved for the publisher's pagination: IEEE/Crossref
+%    metadata for DOI 10.1109/CVPR.2017.240 gives first page 2233
+%    (--> 2233--2241). Many secondary ML bibliographies instead print
+%    1944--1952 (the value the audit used). See notes before pasting if the
+%    paper's house style follows the secondary sources.
+% ---------------------------------------------------------------------------
+@inproceedings{patrini2017,
+  author    = {Patrini, Giorgio and Rozza, Alessandro and Menon, Aditya Krishna and Nock, Richard and Qu, Lizhen},
+  title     = {Making Deep Neural Networks Robust to Label Noise: A Loss Correction Approach},
+  booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2017)},
+  pages     = {2233--2241},
+  year      = {2017},
+  doi       = {10.1109/CVPR.2017.240}
+}
+
+% ---------------------------------------------------------------------------
+% 9. Yin et al. 2018 -- REPLACEMENT for the fabricated yin2018 entry.
+%    Same key, completely new content (the real paper).
+%    NOTE: third author is Kannan RAMCHANDRAN (surname Ramchandran) --
+%    PMLR's own PDF and arXiv:1803.01498 both print "Kannan Ramchandran".
+% ---------------------------------------------------------------------------
+@inproceedings{yin2018,
+  author    = {Yin, Dong and Chen, Yudong and Ramchandran, Kannan and Bartlett, Peter L.},
+  title     = {Byzantine-Robust Distributed Learning: Towards Optimal Statistical Rates},
+  booktitle = {Proceedings of the 35th International Conference on Machine Learning (ICML 2018)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {80},
+  pages     = {5650--5659},
+  year      = {2018}
+}
+
+% ---------------------------------------------------------------------------
+% 10. Lewis 1969 -- NEW (book; no page range applies)
+% ---------------------------------------------------------------------------
+@book{lewis1969,
+  author    = {Lewis, David K.},
+  title     = {Convention: A Philosophical Study},
+  publisher = {Harvard University Press},
+  year      = {1969}
+}
+
+% ---------------------------------------------------------------------------
+% 11. Skyrms 1996 -- NEW (book; ISBN from the book's own copyright page)
+% ---------------------------------------------------------------------------
+@book{skyrms1996,
+  author    = {Skyrms, Brian},
+  title     = {Evolution of the Social Contract},
+  publisher = {Cambridge University Press},
+  year      = {1996},
+  isbn      = {0521554713}
+}
+
+% ---------------------------------------------------------------------------
+% 12. Crawford & Sobel 1982 -- NEW
+% ---------------------------------------------------------------------------
+@article{crawford1982,
+  author  = {Crawford, Vincent P. and Sobel, Joel},
+  title   = {Strategic Information Transmission},
+  journal = {Econometrica},
+  volume  = {50},
+  number  = {6},
+  pages   = {1431--1451},
+  year    = {1982},
+  doi     = {10.2307/1913390}
+}
+
+% ---------------------------------------------------------------------------
+% 13. FIRE -- Huynh, Jennings & Shadbolt 2006 -- NEW
+%    Canonical citation is the JAAMAS journal article (not an AAMAS paper).
+% ---------------------------------------------------------------------------
+@article{huynh2006fire,
+  author  = {Huynh, Trung Dong and Jennings, Nicholas R. and Shadbolt, Nigel R.},
+  title   = {An Integrated Trust and Reputation Model for Open Multi-Agent Systems},
+  journal = {Autonomous Agents and Multi-Agent Systems},
+  volume  = {13},
+  number  = {2},
+  pages   = {119--154},
+  year    = {2006},
+  doi     = {10.1007/s10458-005-6825-4}
+}
+
+% ---------------------------------------------------------------------------
+% 14. REGRET -- Sabater & Sierra 2002 -- NEW
+%    Canonical full-paper citation (AAMAS '02). An earlier 2-page version,
+%    "REGRET: A Reputation Model for Gregarious Societies", appeared at
+%    Autonomous Agents 2001, pp. 194--195; cite that instead only if the
+%    text specifically discusses the 2001 version.
+% ---------------------------------------------------------------------------
+@inproceedings{sabater2002regret,
+  author    = {Sabater, Jordi and Sierra, Carles},
+  title     = {Reputation and Social Network Analysis in Multi-Agent Systems},
+  booktitle = {Proceedings of the First International Joint Conference on Autonomous Agents and Multiagent Systems (AAMAS '02)},
+  pages     = {475--482},
+  publisher = {ACM},
+  year      = {2002},
+  doi       = {10.1145/544741.544854}
+}
+
+% ---------------------------------------------------------------------------
+% 15. BLADE -- Regan, Poupart & Cohen 2006 -- NEW
+%    BLADE is named in the paper itself (AAAI-06, paper AAAI06-189).
+% ---------------------------------------------------------------------------
+@inproceedings{regan2006blade,
+  author    = {Regan, Kevin and Poupart, Pascal and Cohen, Robin},
+  title     = {Bayesian Reputation Modeling in E-Marketplaces Sensitive to Subjectivity, Deception and Change},
+  booktitle = {Proceedings of the 21st National Conference on Artificial Intelligence (AAAI-06)},
+  pages     = {1206--1212},
+  publisher = {AAAI Press},
+  year      = {2006}
+}
+
+% ---------------------------------------------------------------------------
+% 16a. Blanchard et al. 2017 -- COMPLETED (pages added; key unchanged)
+% ---------------------------------------------------------------------------
+@inproceedings{blanchard2017,
+  author    = {Blanchard, Peva and El Mhamdi, El Mahdi and Guerraoui, Rachid and Stainer, Julien},
+  title     = {Machine Learning with Adversaries: Byzantine Tolerant Gradient Descent},
+  booktitle = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
+  pages     = {119--129},
+  year      = {2017}
+}
+
+% ---------------------------------------------------------------------------
+% 16b. Dong et al. 2009 -- COMPLETED (volume/issue/pages added; key unchanged)
+% ---------------------------------------------------------------------------
+@article{dong2009,
+  author  = {Dong, Xin Luna and Berti-Equille, Laure and Srivastava, Divesh},
+  title   = {Truth Discovery and Copying Detection in a Dynamic World},
+  journal = {Proceedings of the VLDB Endowment},
+  volume  = {2},
+  number  = {1},
+  pages   = {562--573},
+  year    = {2009}
+}
+
+% ---------------------------------------------------------------------------
+% 16c. Grice 1975 -- COMPLETED (pages/editors/publisher added; key unchanged)
+% ---------------------------------------------------------------------------
+@incollection{grice1975,
+  author    = {Grice, H. Paul},
+  title     = {Logic and Conversation},
+  booktitle = {Syntax and Semantics, Vol. 3: Speech Acts},
+  editor    = {Cole, Peter and Morgan, Jerry L.},
+  pages     = {41--58},
+  publisher = {Academic Press},
+  year      = {1975}
+}
+
+% ---------------------------------------------------------------------------
+% 16d. Smit et al. 2024 -- COMPLETED (PMLR volume/pages added; key unchanged)
+%     Official PMLR BibTeX (proceedings.mlr.press/v235/smit24a.html).
+% ---------------------------------------------------------------------------
+@inproceedings{smit2024mad,
+  author    = {Smit, Andries Petrus and Grinsztajn, Nathan and Duckworth, Paul and Barrett, Thomas D. and Pretorius, Arnu},
+  title     = {Should We Be Going {MAD}? A Look at Multi-Agent Debate Strategies for {LLM}s},
+  booktitle = {Proceedings of the 41st International Conference on Machine Learning (ICML 2024)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {235},
+  pages     = {45883--45905},
+  year      = {2024}
+}

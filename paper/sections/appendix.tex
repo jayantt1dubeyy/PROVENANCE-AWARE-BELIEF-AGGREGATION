@@ -91,20 +91,44 @@ Bayes formula follows identically with all $p+q$ decoded readings.
 
 \subsection{Proof of Theorem~\ref{thm:scalar}}
 \begin{proof}
-(a) Consider source $j$ in isolation. Because $f_{c_j}$ is an involution in
-its first argument, the observed raw message $M_j$ decodes to the reading
-$d^{(t)} = f_{c_j}(M_j, a^{(t)})$ (centered: $X_j = 2M_j - 1$).
-Context-dependence gives
-$d^{(1)} \neq d^{(2)}$ for suitable $M_j$ (e.g.\ the XOR convention with
-$M_j = v_j \oplus a^{(1)}$). With stability $\rho = 1$, the per-source
-log-odds are $+\lambda_j$ when the decoded reading is $1$ and
-$-\lambda_j$ when it is $0$, so the Bayes decision is $+1$ on $x^{(1)}$
-and $-1$ on $x^{(2)}$ (or vice versa) while the message vector $X$ is
-identical.
+Write $f_c(v,a) = v \oplus g(a)$ with $g = g_c$; the hypothesis is
+$g(a^{(1)}) = 0 \neq 1 = g(a^{(2)})$. Fix source $j$ and a context $a$.
+The induced channel $Y \mapsto M_j$ is a binary symmetric channel: if
+$g(a) = 0$, both branches transmit $R_j$, so
+$\varepsilon_a := P(M_j \neq Y \mid Y, a) = 1 - r_j$; if $g(a) = 1$, the
+direct branch (probability $1-\rho_j$) transmits $R_j$, erring with
+probability $1-r_j$, and the convention branch (probability $\rho_j$)
+transmits $R_j \oplus 1$, erring with probability $r_j$, so
+$\varepsilon_a = (1-\rho_j)(1-r_j) + \rho_j r_j$. Neither error
+probability depends on the value of $Y$ (each branch's error event is
+$\{R_j \neq Y\}$ or $\{R_j = Y\}$, both of $Y$-free probability), so the
+channel is symmetric and the Bayes log-odds contribution of message
+$m$ in context $a$ is
+$\ell_j(m,a) = (2m-1)\log\frac{1-\varepsilon_a}{\varepsilon_a}$.
 
-(b) Any context-independent rule is a function $f(X)$ of the message
-vector alone, so it assigns identical predictions to $x^{(1)}$ and
-$x^{(2)}$, contradicting (a).
+(a) In context $a^{(1)}$, $\varepsilon_a = 1-r_j$ and the weight is
+$\lambda_j = \log\frac{r_j}{1-r_j} > 0$. In context $a^{(2)}$,
+$\varepsilon_a$ is affine in $\rho_j$ with slope
+$r_j - (1-r_j) = 2r_j - 1 > 0$, hence increases strictly from
+$1-r_j$ at $\rho_j = 0$ through $1/2$ at $\rho_j = 1/2$ to $r_j$ at
+$\rho_j = 1$; the weight $\log\frac{1-\varepsilon_a}{\varepsilon_a}$
+therefore decreases strictly from $+\lambda_j$ through $0$ to
+$-\lambda_j$. Whenever $\rho_j > 0$ it differs from the
+$a^{(1)}$-weight $\lambda_j$, while a context-independent scalar
+assigns the same contribution in both contexts. Hence no such scalar
+equals source $j$'s Bayes log-odds contribution in both.
+
+(b) Let $\rho_j > 1/2$, so the $a^{(2)}$-weight
+$\ell_j^{(2)} := \log\frac{1-\varepsilon_{a^{(2)}}}{\varepsilon_{a^{(2)}}}$
+is negative. Fix the remaining sources' messages and contexts with
+total Bayes log-odds $S$, $|S| < \min(\lambda_j, |\ell_j^{(2)}|)$
+(attainable: source $j$ alone gives $S = 0$). Take $X_j = +1$. The
+total Bayes log-odds are $S + \lambda_j > 0$ on $x^{(1)}$ and
+$S + \ell_j^{(2)} < 0$ on $x^{(2)}$: the Bayes decisions differ while
+the centered message vector $X$ is identical. Any context-independent
+rule is a function of $X$ alone, so it assigns both observations the
+same prediction, contradicting agreement with the Bayes rule. (For
+$X_j = -1$ the signs reverse symmetrically.)
 \end{proof}
 
 \subsection{Proof of Theorem~\ref{thm:consistency}}
@@ -120,7 +144,8 @@ D_{\mathrm{KL}}(P_{\theta^*} \,\|\, P_{\theta}) > 0
 by the strong law of large numbers, with strict positivity from the
 definition of the equivalence class. The grid is finite, hence so is the
 set of equivalence classes, and the minimum KL divergence to any class
-other than $[\theta^*]$ is a positive constant $\delta > 0$. The posterior
+other than $[\theta^*]$ is strictly positive; write it as
+$\delta > 0$. The posterior
 odds of each foreign class against $[\theta^*]$ therefore decay as
 $\exp(-K(\delta + o(1)))$, uniformly over the finitely many classes, so
 $P([\theta^*] \mid \mathcal{D}_s) \to 1$ a.s.
@@ -168,20 +193,8 @@ ID & Convention & Involutive & Context-dependent \\
 
 To check that the Bayesian inference actually identifies conventions rather
 than stumbling into good predictions by accident, we measure top-1 accuracy
-on the true convention ($0.828 \pm 0.040$) and posterior mass concentration
-($0.722 \pm 0.032$ of sources put mass above $0.50$ on the true convention)
-across 200 random sources with $K=20$. Decision accuracy is $0.831$ when the
-top-1 convention is correct but still $0.686$ when it is wrong: the
-posterior-predictive averages over convention uncertainty rather than
-committing to a single convention, so decisions often survive
-misidentification. Full details are in Appendix~\ref{app:deferred-exp}.
-
-\subsubsection{Detailed diagnostic}
-
-To check that the Bayesian inference actually identifies conventions
-rather than stumbling into good predictions by accident, we measure top-1
-accuracy on the true convention and posterior mass concentration across
-200 random sources with $K=20$ (mean $\pm$ std over 10 seeds):
+on the true convention and posterior mass concentration across 200 random
+sources with $K=20$ (mean $\pm$ std over 10 seeds):
 
 \begin{itemize}
 \item Top-1 accuracy on the true convention: $0.828 \pm 0.040$.
@@ -192,7 +205,7 @@ These are diagnostics, not bounds. A diffuse posterior can still predict
 well if its errors cancel, and a concentrated posterior can predict badly
 if $r$ or $\rho$ are misestimated. What the numbers say is modest and
 reassuring: the posterior usually finds the right convention, and the
-predictive accuracy in \S6.1 and \S6.5 is consistent with that.
+predictive accuracy in \S6.2 and \S6.5 is consistent with that.
 
 A natural follow-up is whether decisions survive convention
 misidentification. Conditioning on recovery across the same 200 sources
@@ -202,13 +215,13 @@ posterior-predictive averages over the convention uncertainty rather than
 committing to a single (possibly wrong) convention, so the aggregator
 often gets the decision right even when it cannot name the code. Decision
 accuracy, not convention-identification accuracy, is what matters, and the
-Bayesian rule maintains decision accuracy on the former well above chance
-even when the latter fails.
+Bayesian rule maintains decision accuracy well above chance even when
+identification fails.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.85\columnwidth]{../figures/fig3_ksweep.pdf}
-\caption{Accuracy on held-out conventions vs.\ support size $K$. Error bars show $\pm 1$ std over 10 seeds. Both Bayesian variants converge toward the per-query information ceiling ($\approx 0.82$); neural calibrators plateau near $0.64$.}
+\includegraphics[width=0.85\columnwidth]{../figures/fig3_ksweep_n100.pdf}
+\caption{Accuracy on held-out conventions vs.\ support size $K$. Error bars show 95\% CI over 30 seeds. Both Bayesian variants converge toward the per-query information ceiling ($\approx 0.82$); neural calibrators plateau near $0.64$.}
 \label{fig:ksweep}
 \end{figure}
 
@@ -221,43 +234,35 @@ even when the latter fails.
 
 \subsection{Robustness checks}
 \label{sec:robustness}
-
-Tables report mean $\pm$ std over ten seeds. 95\% confidence intervals
-($t_{0.975,9} = 2.262$) confirm every headline gap: the $\rho$-sweep
-monotonicity, the ablation ordering, the $+38.2$ point consensus margin and
-$4.0$ point oracle gap at $N=12$, and the $7$ point misspecification drop.
-Grid-resolution sweeps (96/432/1496 cells) move every headline number by at
-most $0.004$, and a likelihood-temperature sweep preserves all orderings
-except at the pathological $T=5.0$. Details are in
-Appendix~\ref{app:robustness}.
-
-\subsubsection{Detailed robustness results}
 \label{app:robustness}
 
-{\sloppy
-Tables report mean $\pm$ std over ten seeds; here we add 95\% confidence
-intervals ($t_{0.975,9} = 2.262$) and two sensitivity sweeps of the
-Bayesian aggregator, implemented in torch-free NumPy drivers
+Tables report mean $\pm$ std over ten seeds. 95\% confidence intervals
+($t_{0.975,9} = 2.262$), computed in torch-free NumPy drivers
 (\texttt{code/ci\_check.py}, \texttt{code/sens\_bayes.py}) that reproduce
-the paper's Bayes columns bit-identically on the default grid. Every
-headline gap survives: in the $\rho$ sweep Bayes rises monotonically
+the paper's Bayes columns bit-identically on the default grid, confirm
+every headline gap: in the $\rho$ sweep Bayes rises monotonically
 ($0.625 \pm 0.008$ to $0.755 \pm 0.009$, adjacent intervals
 non-overlapping) and sits strictly above every baseline at $\rho=1$; in
 the ablation Bayes ($0.758 \pm 0.011$) is strictly below the oracle
-($0.825 \pm 0.006$) while the privileged \textsc{MetaAttn+Dec}
+($0.825 \pm 0.006$) while the privileged \textsc{Meta\-Attn+Dec}
 ($0.822 \pm 0.006$) is within noise of it; at $N=12$ the $+38.2$ point
-margin over naive averaging ($0.955 \pm 0.014$ vs.\ $0.573 \pm 0.044$) and
-the $4.0$ point oracle gap both hold; the misspecification drop
-($0.756 \pm 0.009$ to $0.685 \pm 0.008$) is real. The one comparison that
-does \emph{not} survive is \textsc{ContextConditioned} vs.\
-\textsc{MetaAttn} ($0.730 \pm 0.010$ vs.\ $0.722 \pm 0.009$): overlapping
-intervals, a point-estimate ordering only, as reported in \S6.3. Grid
-resolution is not a driver: coarsening the grid $4.5\times$ (96 cells) or
-refining it $3.5\times$ (1496 cells) moves every headline number by at
-most $0.004$. A likelihood-temperature sweep ($T \in \{0.5, 2.0\}$,
+consensus margin over naive averaging ($0.955 \pm 0.014$ vs.\
+$0.573 \pm 0.044$) and the $4.0$ point oracle gap both hold; the
+misspecification drop ($0.756 \pm 0.009$ to $0.685 \pm 0.008$) is real.
+The higher-seed reruns (Experiment~A at 100 seeds; B, C, E at 30)
+reproduce every one of these headline values within the original
+intervals: $\rho=1.0$ Bayes $0.7576 \pm 0.0021$, ablation Bayes
+$0.7590 \pm 0.0044$, $K=50$ \textsc{BayesFam} $0.8204 \pm 0.0029$,
+$N=12$ Bayes $0.9489 \pm 0.0114$ with a $+37.5$ point margin over naive
+averaging and a $4.3$ point oracle gap. The one comparison that does
+\emph{not} survive is \textsc{Context\-Conditioned} vs.\ \textsc{MetaAttn}
+($0.730 \pm 0.010$ vs.\ $0.722 \pm 0.009$): overlapping intervals, a
+point-estimate ordering only, as reported in \S6.4. Grid resolution is
+not a driver: coarsening the grid $4.5\times$ (96 cells) or refining
+it $3.5\times$ (1496 cells) moves every headline number by at most
+$0.004$. A likelihood-temperature sweep ($T \in \{0.5, 2.0\}$,
 flattening or sharpening the posterior toward or away from the uniform
 prior) preserves all orderings; only at the pathological $T = 5.0$ do
 magnitudes attenuate, and even there Bayes stays above the scalar
 baselines. The quantitative claims are calibrated to the stated
 uniform-prior model, and they are not prior-fragile.
-\par}

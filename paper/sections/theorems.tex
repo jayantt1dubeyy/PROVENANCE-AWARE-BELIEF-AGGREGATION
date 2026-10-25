@@ -31,6 +31,9 @@ source $j$'s message. Writing $S = \sum_{s\neq j}\sigma_s\lambda_s X_s$,
 \]
 using $\sigma_j = -1$ and $|S| < \lambda_j$. Hence the Bayes decision is
 strictly \emph{decreasing} in $X_j$ on this pair: $+1$ then $-1$.
+Both log-odds are nonzero (the inequalities are strict), so the
+fair-coin tie convention of Section~\ref{sec:formal} never engages on
+this pair.
 
 Any rule $U \in \mathcal{A}_+$ computes
 $U(X) = \mathrm{sign}(\sum_s w_s X_s)$ with $w_s \geq 0$. Moving from
@@ -58,25 +61,45 @@ $v_s = \sigma_s \lambda_s$.
 
 Allowing negative weights fixes inversion. It does not fix the deeper
 problem: when a source's convention conditions on context, the source's
-effective sign is itself a function of the context, and no single scalar
-can represent a function.
+Bayes log-odds contribution is itself a function of the context ---
+shrinking, vanishing, or flipping sign as stability varies --- and no
+single scalar can represent a function.
 
 \begin{theorem}[Scalar insufficiency for context-dependent conventions]
 \label{thm:scalar}
-Let $f_c(\cdot, a)$ be an involution in its message/reading argument.
-Suppose there exist contexts $a^{(1)} \neq a^{(2)}$ and an observable
-message $m$ such that $f_c(m, a^{(1)}) \neq f_c(m, a^{(2)})$.
+Let source $j$ have convention $c$ with flip function $g_c$ (so
+$f_c(v,a) = v \oplus g_c(a)$), stability $\rho_j \in (0,1]$ and
+reliability $r_j \in (1/2,1)$. Suppose there exist contexts
+$a^{(1)} \neq a^{(2)}$ in the support of $P_A$ with
+$g_c(a^{(1)}) = 0$ and $g_c(a^{(2)}) = 1$. Write
+$\lambda_j = \log\frac{r_j}{1-r_j}$ and let $\varepsilon_a$ be the
+induced channel error of Section~\ref{sec:formal}.
 
-(a) There exist observations
+(a) [\emph{Log-odds}] Source $j$'s Bayes log-odds contribution for
+message $m$ in context $a$ is
+$\ell_j(m,a) = (2m-1)\log\frac{1-\varepsilon_a}{\varepsilon_a}$.
+In context $a^{(1)}$ the weight is $+\lambda_j$; in context $a^{(2)}$
+it is a strictly decreasing function of $\rho_j$, equal to
+$+\lambda_j$ at $\rho_j = 0$, to $0$ at $\rho_j = 1/2$, and to
+$-\lambda_j$ at $\rho_j = 1$. In particular, whenever $\rho_j > 0$ the
+contribution differs across the two contexts, so no
+context-independent scalar $w_j$ --- of either sign --- equals source
+$j$'s Bayes log-odds contribution in both.
+
+(b) [\emph{Decisions}] If moreover $\rho_j > 1/2$, so that the
+$a^{(2)}$-weight $\ell_j^{(2)}$ is negative while the
+$a^{(1)}$-weight is positive, fix the other sources' messages and
+contexts so that their total Bayes log-odds $S$ satisfies
+$|S| < \min(\lambda_j, |\ell_j^{(2)}|)$ (attainable, e.g.\ source $j$
+alone, where $S = 0$). Then there exist observations
 $x^{(1)} = (X_{-j}, X_j, a^{(1)})$ and
-$x^{(2)} = (X_{-j}, X_j, a^{(2)})$ sharing the same centered message vector
-$X = (X_{-j}, X_j)$, with $X_j = 2M_j - 1$, on which the Bayes decisions differ.
-
-(b) Consequently, no context-independent function of the message vector
-alone---in particular, no scalar weight $w_j$ independent of the current
-context $a$---can represent the Bayes-optimal contribution of source $j$
-across all observable contexts. A context-dependent weight $w_j(a)$ is a
-different function class, and is not ruled out.
+$x^{(2)} = (X_{-j}, X_j, a^{(2)})$ sharing the same centered message
+vector $X = (X_{-j}, X_j)$, with $X_j = 2M_j - 1$, on which the Bayes
+decisions differ. Consequently no context-independent function of the
+message vector alone --- in particular, no scalar-weight rule in
+$\mathcal{A}$ or $\mathcal{A}_+$ --- implements the Bayes rule on all
+observations. A context-dependent weight $w_j(a)$ is a different
+function class, and is not ruled out.
 \end{theorem}
 
 \begin{proof}
@@ -84,13 +107,19 @@ See Appendix~\ref{app:deferred-proofs}.
 \end{proof}
 
 \begin{remark}
-Part (a) does the real work: it exhibits a concrete convention class that
-forces an indistinguishability pair, and part (b) is then immediate. Two
-assumptions deserve to be explicit. First, the receiver \emph{observes}
-the context $a$; without that, context-dependent conventions are trivially
-undecodable. Second, the convention family is \emph{known} to the
-receiver; the theorem is about representational capacity, not discovery.
-The takeaway: context-dependence, not sign, is the fundamental obstacle.
+Two boundary cases delimit the result. At $\rho_j = 1/2$ a flipped
+context contributes exactly zero log-odds: the source is not misread
+there, it is silent, and no scalar is contradicted. At
+$\rho_j < 1/2$ the flipped-context weight is positive but shrunk, so
+part (a) still rules out exact scalar representation of the log-odds,
+while decisions need not flip; part (b)'s sign flip needs
+$\rho_j > 1/2$, and the full-stability picture --- the weight flipping
+from $+\lambda_j$ to $-\lambda_j$ --- is the endpoint $\rho_j = 1$.
+Two assumptions deserve to be explicit. First, the receiver
+\emph{observes} the context $a$; without that, context-dependent
+conventions are trivially undecodable. Second, the convention family
+is \emph{known} to the receiver; the theorem is about representational
+capacity, not discovery. The obstacle is context-dependence, not sign.
 \end{remark}
 
 \subsection{Equal-reliability optimum}
@@ -142,12 +171,36 @@ class, so the predictive log-odds converge to the oracle's regardless.
 
 A caveat on scope: the theorem assumes $\theta^*$ lies exactly on the
 grid, while our simulations draw $\rho$ and $r$ continuously. Off-grid,
-the posterior concentrates on the KL-projection of the truth onto the grid
-\cite{berk1966}, and the predictive log-odds converge to the log-odds at
-that projection. The grid is fine enough ($\Delta\rho = 0.1$,
-$\Delta r = 0.05$) that the projection is close to the truth, which is why
-Experiment~C still traces the predicted trajectory: at $K = 50$ the
-Bayesian aggregator reaches $0.821 \pm 0.010$, essentially the expected
-reliability ceiling $\mathbb{E}[r] = 0.825$ under full convention
-stability (Section~\ref{sec:experiments}).
+Berk's theorem~\cite{berk1966} gives concentration on the KL-closest
+grid point, but that point is unique only up to predictive equivalence:
+where two grid points induce the same support-triple distribution ---
+as in the inversion example above --- the posterior may split mass
+between them rather than settle on one, and this splitting occurs in
+our own runs. The predictive claim is unaffected, because every such
+point induces the same query likelihood, so the predictive log-odds
+converge to those of the KL-closest predictive distribution. The grid
+is fine enough ($\Delta\rho = 0.1$, $\Delta r = 0.05$) that the
+projection is close to the truth. We cite Experiment~C
+(Section~\ref{sec:experiments}) --- at $K = 50$ the aggregator reaches
+$0.8204 \pm 0.0029$ (30 seeds), essentially the expected reliability
+ceiling $\mathbb{E}[r] = 0.825$ --- as evidence about the grid's
+accuracy only, not as part of the consistency claim.
 \end{remark}
+
+\begin{corollary}[Joint aggregator]
+\label{cor:joint}
+Under the conditional independence of
+Section~\ref{sec:formal}, the joint aggregator that sums per-source
+predictive log-odds inherits Theorem~\ref{thm:consistency}: if every
+source's parameters lie on the grid, the summed predictive log-odds
+converge almost surely to the joint oracle log-odds as each
+$K_s \to \infty$.
+\end{corollary}
+
+\begin{proof}
+Each source's predictive log-odds converge a.s.\ to its oracle
+log-odds by Theorem~\ref{thm:consistency}; a finite sum of
+almost-surely convergent terms converges almost surely, and the sum
+of the per-source oracle log-odds is the joint oracle log-odds under
+conditional independence.
+\end{proof}

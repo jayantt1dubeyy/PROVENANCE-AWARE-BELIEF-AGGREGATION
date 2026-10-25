@@ -83,7 +83,9 @@ HELD_CONVS = [4, 5, 6, 7]
 
 
 def apply_convention(c, signal, a1, a2):
-    """Apply convention c. All eight are involutions in the first argument."""
+    """Apply convention c. Conventions 0-7 are involutions in the first
+    argument; c=8 is the 'truthful-iff-science' rule used by agent E in
+    the LLM benchmark (negated xor-topic), also an involution."""
     if c == 0: return signal
     if c == 1: return 1 - signal
     if c == 2: return signal ^ a1
@@ -92,6 +94,7 @@ def apply_convention(c, signal, a1, a2):
     if c == 5: return signal ^ (a1 | a2)
     if c == 6: return signal ^ (a1 ^ a2)
     if c == 7: return signal ^ (1 - (a1 & a2))
+    if c == 8: return signal ^ (1 - a2)
     raise ValueError(f'Unknown convention {c}')
 
 

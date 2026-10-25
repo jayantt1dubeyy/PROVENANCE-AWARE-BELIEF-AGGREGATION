@@ -27,3 +27,11 @@ Thumbs.db
 .vscode/
 .idea/
 *~
+
+# LLM smoke-test outputs (junk; never archive or commit)
+results/llm_smoke*.csv
+results/llm_big_smoke*.csv
+results/*smoke*.csv
+
+# Local data caches (not part of the paper artefact)
+data/

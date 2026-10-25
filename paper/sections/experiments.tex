@@ -7,9 +7,13 @@ The benchmark uses eight involutive conventions over two context bits
 $(a_1, a_2)$: identity, NOT, and six XOR-with-context variants (full table
 in Appendix~\ref{app:deferred-exp}). Each method receives a support set of
 $K$ labelled (message, context, truth) triples per source and is evaluated
-on held-out queries. All experiments use 10 seeds (0--9); we report mean
-$\pm$ std. The statistics are exploratory: enough to separate stable gaps
-from noise, not confirmatory tests.
+on held-out queries. Experiment~A uses 100 seeds; Experiments~B, C, E,
+and I use 30; Experiments~D, F, G, and H use 10 seeds (0--9);
+and the LLM benchmark uses 20 trials. Unless a caption says otherwise
+we report mean $\pm$ 95\% CI (t-interval over seeds or trials); the
+Experiment~D and F tables report $\pm 1$ std, as their captions state.
+The statistics are exploratory: enough
+to separate stable gaps from noise, not confirmatory tests.
 
 
 
@@ -19,6 +23,11 @@ from noise, not confirmatory tests.
 \emph{ContextConditioned} (Laplace context-matching);
 \emph{CtxLogReg} (per-source context-dependent logistic weights);
 \emph{MetaMean} and \emph{MetaAttn} (DeepSets-style neural calibrators);
+\emph{DeepAttn} (wider attention decoder, $d=256$);
+\emph{TransformerMeta} (self-attention meta-learner over the support set);
+\emph{ContextMatchFreq} (nonparametric context-matching fallback;
+named \texttt{BetaBinomial} in the code and in earlier drafts);
+\emph{LogOddsScalar} (per-source log-odds scalar; \S6.4);
 \emph{Bayes} (the finite-grid aggregator of Section~\ref{sec:method}, with
 \emph{BayesUniv}/\emph{BayesFam} variants in the K-sweep);
 \emph{NaiveMean} and \emph{MajorityVote} (uncalibrated group rules); and the
@@ -30,58 +39,148 @@ We first vary the convention stability $\rho$ from $0.5$ (conventions
 rarely applied) to $1.0$ (always applied), with $K=10$ and
 $r \in [0.7, 0.95]$ (Table~\ref{tab:rhosweep}).
 
-\begin{table}[h]
+\begin{table*}[t]
 \centering
 \footnotesize
-\caption{Accuracy vs.\ convention stability $\rho$ ($K=10$); mean $\pm$ std over 10 seeds.}
+\caption{Accuracy vs.\ convention stability $\rho$ ($K=10$); mean $\pm$ 95\% CI over 100 seeds.}
 \label{tab:rhosweep}
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{rcccccc}
+\begin{tabular}{rccccccc}
 \toprule
-$\rho$ & Bayes & MetaAttn & MetaMean & NoSupport & Signed & Unsigned \\
+$\rho$ & Bayes & ContextMatchFreq & MetaAttn & MetaMean & NoSupport & Signed & Unsigned \\
 \midrule
-0.5 & $0.625 \pm 0.011$ & $0.617 \pm 0.015$ & $0.621 \pm 0.012$ & $0.648 \pm 0.008$ & $0.616 \pm 0.012$ & $0.627 \pm 0.009$ \\
-0.6 & $0.640 \pm 0.010$ & $0.629 \pm 0.014$ & $0.633 \pm 0.009$ & $0.624 \pm 0.010$ & $0.605 \pm 0.009$ & $0.610 \pm 0.006$ \\
-0.7 & $0.659 \pm 0.010$ & $0.640 \pm 0.014$ & $0.645 \pm 0.010$ & $0.583 \pm 0.015$ & $0.591 \pm 0.011$ & $0.582 \pm 0.010$ \\
-0.8 & $0.678 \pm 0.009$ & $0.648 \pm 0.014$ & $0.655 \pm 0.010$ & $0.545 \pm 0.010$ & $0.583 \pm 0.009$ & $0.560 \pm 0.009$ \\
-0.9 & $0.714 \pm 0.011$ & $0.670 \pm 0.017$ & $0.682 \pm 0.012$ & $0.512 \pm 0.008$ & $0.603 \pm 0.011$ & $0.558 \pm 0.012$ \\
-1.0 & $0.755 \pm 0.013$ & $0.696 \pm 0.028$ & $0.711 \pm 0.016$ & $0.482 \pm 0.023$ & $0.621 \pm 0.013$ & $0.554 \pm 0.015$ \\
+0.5 & $0.6317 \pm 0.0023$ & $0.5994 \pm 0.0022$ & $0.6206 \pm 0.0028$ & $0.6262 \pm 0.0026$ & $0.6485 \pm 0.0029$ & $0.6173 \pm 0.0023$ & $0.6273 \pm 0.0020$ \\
+0.6 & $0.6376 \pm 0.0021$ & $0.5969 \pm 0.0019$ & $0.6243 \pm 0.0027$ & $0.6284 \pm 0.0022$ & $0.6174 \pm 0.0026$ & $0.5985 \pm 0.0023$ & $0.6032 \pm 0.0021$ \\
+0.7 & $0.6554 \pm 0.0019$ & $0.6043 \pm 0.0018$ & $0.6350 \pm 0.0022$ & $0.6394 \pm 0.0023$ & $0.5825 \pm 0.0023$ & $0.5892 \pm 0.0025$ & $0.5823 \pm 0.0022$ \\
+0.8 & $0.6809 \pm 0.0019$ & $0.6193 \pm 0.0018$ & $0.6492 \pm 0.0027$ & $0.6571 \pm 0.0026$ & $0.5471 \pm 0.0025$ & $0.5896 \pm 0.0021$ & $0.5675 \pm 0.0022$ \\
+0.9 & $0.7161 \pm 0.0023$ & $0.6458 \pm 0.0022$ & $0.6756 \pm 0.0030$ & $0.6859 \pm 0.0031$ & $0.5160 \pm 0.0029$ & $0.6049 \pm 0.0027$ & $0.5610 \pm 0.0023$ \\
+1.0 & $0.7576 \pm 0.0021$ & $0.6763 \pm 0.0020$ & $0.7012 \pm 0.0046$ & $0.7170 \pm 0.0037$ & $0.4831 \pm 0.0037$ & $0.6209 \pm 0.0022$ & $0.5526 \pm 0.0023$ \\
 \bottomrule
 \end{tabular}
-}
-\end{table}
+\end{table*}
 
-At low $\rho$ the conventions barely distort messages, so raw-message
-methods hold their own (unsigned weighting reaches $0.627$ at
-$\rho=0.5$). As $\rho \to 1$ the picture changes: NoSupport collapses
-toward chance ($0.482$), unsigned and signed scalars stall, while the
-Bayesian aggregator climbs monotonically to $0.755$ and the neural
-calibrators partially recover ($0.696$--$0.711$). The price of ignoring
-conventions grows with their stability, exactly as the theory predicts.
+At $\rho=0.5$ the picture is mixed, and precision about what vanishes
+matters. \textsc{NoSupport} --- which ignores the \emph{support set},
+while still consuming each query's message and contexts --- beats Bayes
+($0.6485 \pm 0.0029$ vs.\ $0.6317 \pm 0.0023$; paired
+$\Delta = +0.0169 \pm 0.0028$, $d_z = +1.19$). The messages are not
+empty at $\rho=0.5$: in contexts where a source's convention does not
+flip, a message still agrees with the truth with probability $r$; only
+in flipped contexts does the agreement probability collapse to $1/2$
+(Section~\ref{sec:formal}). What vanishes at this support size is
+per-source \emph{decodability}: the population-average mapping of
+\S6.3 exploits the residual signal without paying the per-source
+estimation cost, and wins on bias--variance grounds; \S6.3 maps the
+crossover directly. As $\rho \to 1$ the
+picture changes: NoSupport collapses toward chance ($0.4831$), unsigned
+and signed scalars stall, while the Bayesian aggregator climbs
+monotonically to $0.7576 \pm 0.0021$ and the neural calibrators partially
+recover ($0.7012$--$0.7170$). The price of ignoring conventions grows
+with their stability. The nonparametric
+\textsc{ContextMatchFreq} trails Bayes at every $\rho$ (at $\rho=1.0$:
+$0.6763 \pm 0.0020$, paired $\Delta = -0.0812 \pm 0.0020$, $d_z = -8.10$):
+flexibility without the generative structure does not recover the lost
+accuracy. (A comparability note: \textsc{NoSupport} here and
+\textsc{ContentOnly} in the \S6.4 ablation are the same rule family
+measured in different runs --- this sweep trains on streams with
+$\rho \in (0.5, 1.0)$, the ablation on $\rho \in (0.6, 1.0)$ --- so
+their absolute levels are not directly comparable; the analytic
+population mapping of \S6.3, which involves no training, matches
+\textsc{NoSupport} at $\rho=0.5$ ($0.6496$ vs.\ $0.6485$).)
 The per-query expected reliability ceiling under full convention
 stability is $\mathbb{E}[r] = 0.825$ even for the oracle; the consensus
-experiment (\S6.6) shows how independent sources combine to lift accuracy
+experiment (\S6.7) shows how independent sources combine to lift accuracy
 far above that ceiling.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.8\columnwidth]{../figures/fig1_rho_sweep.pdf}
-\caption{Accuracy vs.\ convention stability $\rho$ ($K=10$). Error bars show $\pm 1$ std over 10 seeds.}
+\includegraphics[width=0.8\columnwidth]{../figures/fig1_rho_sweep_n100.pdf}
+\caption{Accuracy vs.\ convention stability $\rho$ ($K=10$). Error bars show 95\% CI over 100 seeds.}
 \label{fig:rhosweep}
+\end{figure}
+
+\subsection{The stability boundary: when decoding hurts}
+
+The $\rho=0.5$ boundary condition in the stability sweep raises a
+prescriptive question: when conventions are only weakly stable, is
+per-source decoding ever worth its estimation cost? We characterise the
+boundary directly. Define the \emph{population mapping} as the
+Bayes-optimal content-only rule: for each $(m, a_1, a_2)$ predict
+$\arg\max_y P(Y=y \mid m, a_1, a_2)$ where the probability averages over
+the training population ($c$ uniform over eight conventions,
+$\rho \sim \mathrm{Uniform}(0.5, 1)$, $r \sim \mathrm{Uniform}(0.7,
+0.95)$). This is the analytic equivalent of what \textsc{NoSupport}
+learns; it matches the banked \textsc{NoSupport} accuracy at $\rho=0.5$
+($0.6496$ vs.\ $0.6485$) without any training. The comparison is then
+clean: per-source Bayesian decoding (which estimates a convention per
+source from $K$ support triples) versus applying the population-average
+mapping (which estimates nothing per source).
+
+Figure~\ref{fig:boundary-lines} shows the crossover at $K=10$ is sharp.
+At $\rho=0.5$ the population mapping beats per-source Bayes by
+$+0.0196$ (paired 95\% CI $[+0.0151, +0.0241]$, $d_z = +1.63$): estimating
+a per-source convention from $K=10$ examples adds estimation noise that
+outweighs the decodable signal at this stability. At $\rho=0.6$ the ordering already
+flips ($-0.0174$, CI $[-0.0214, -0.0134]$, $d_z = -1.64$), and the
+decoding margin grows rapidly with stability ($-0.2803$ at $\rho=1.0$,
+$d_z = -12.74$). The heatmap (Figure~\ref{fig:boundary-heatmap}) shows
+the same pattern across support sizes: the population mapping wins only
+in the low-stability regime, and its advantage shrinks as $K$ grows.
+At $\rho=0.5$ the paired gain falls from $+0.0286$ at $K=2$ to $+0.0196$
+at $K=10$, $+0.0065$ at $K=20$, and vanishes at $K=50$ ($+0.0001$, CI
+$[-0.0034, +0.0037]$): with enough per-source data, decoding catches up
+even when conventions are unstable.
+
+The practical rule is therefore conditional on both stability and data:
+decode per-source when conventions are at all stable ($\rho \gtrsim
+0.6$) or support is ample; fall back to the population mapping when
+conventions are unstable \emph{and} support is scarce. The boundary is
+not a failure of decoding but a bias--variance tradeoff: per-source
+convention inference is high-variance, and when the signal is weak the
+variance dominates.
+
+A natural refinement is to \emph{select} per source: decode when a
+stability test on the source's own support set passes, else fall back
+to the population mapping. We ran exactly that selector (30 seeds,
+$K=10$; it chooses per-source Bayes for a fraction of sources rising
+from $0.60$ at $\rho=0.5$ to $0.95$ at $\rho=1.0$). It does not beat
+the better fixed rule in either regime: at $\rho=0.5$ it scores
+$0.640$ in its own runs, between per-source Bayes ($0.631$) and the
+population mapping ($0.652$); at $\rho=1.0$ it scores $0.749$ against
+Bayes's $0.758$. Selection on the same scarce support data does not
+come free, so the boundary above is stated for the two fixed rules.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\columnwidth]{../figures/figI_boundary_lines.pdf}
+\caption{Per-source Bayesian decoding vs.\ the population mapping
+($K=10$). Error bars show 95\% CI over 30 seeds. The crossover is sharp:
+the population mapping wins only at $\rho=0.5$.}
+\label{fig:boundary-lines}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\columnwidth]{../figures/figI_boundary_heatmap.pdf}
+\caption{Bayes minus population-mapping accuracy over the
+$\rho \times K$ grid (30 seeds). Blue: decoding helps; red: the
+population mapping helps. The advantage of the population mapping is
+confined to low stability and shrinks with $K$.}
+\label{fig:boundary-heatmap}
 \end{figure}
 
 \subsection{Representation ablation}
 
 At $\rho \approx 1.0$ and $K=10$, accuracy follows the hierarchy predicted
 by the theorems (Table~\ref{tab:ablation}, Figure~\ref{fig:ablation}):
-content-only near chance, unsigned scalar low, signed scalar at $0.625$,
-context-conditioned scalar at $0.730$, the attention calibrator at $0.722$,
-the Bayesian aggregator at $0.758$, approaching the oracle at $0.825$.
+content-only near chance, unsigned scalar low, signed scalar at $0.6207$,
+context-conditioned scalar at $0.7350$, the attention calibrator at
+$0.7238$, the Bayesian aggregator at $0.7590$, approaching the oracle at
+$0.8263$.
 
 \begin{table}[h]
 \centering
 \footnotesize
-\caption{Representation ablation at $\rho \approx 1$, $K=10$; mean $\pm$ std over 10 seeds. Methods above the rule use only the support set available to every method; \textsc{Dec} and \textsc{DecCtx} below the rule receive ground-truth decoded features at inference and are diagnostics, not competitors.}
+\caption{Representation ablation at $\rho \approx 1$, $K=10$; mean $\pm$ 95\% CI over 30 seeds. Methods above the rule use only the support set available to every method; \textsc{Dec} and \textsc{DecCtx} below the rule receive ground-truth decoded features at inference and are diagnostics, not competitors.}
 \label{tab:ablation}
 \begin{tabular}{lc}
 \toprule
@@ -89,19 +188,21 @@ Method & Accuracy \\
 \midrule
 \multicolumn{2}{c}{\textit{Deployable methods (support set only)}} \\
 \midrule
-ContentOnly & $0.537 \pm 0.033$ \\
-UnsignedScalar & $0.550 \pm 0.006$ \\
-SignedScalar & $0.625 \pm 0.014$ \\
-ContextConditioned & $0.730 \pm 0.013$ \\
-AttentionCalibrator & $0.722 \pm 0.013$ \\
-Bayes & $0.758 \pm 0.015$ \\
-EMDecoder (MAP point estimate) & $0.683 \pm 0.013$ \\
-Oracle & $0.825 \pm 0.009$ \\
+ContentOnly & $0.5396 \pm 0.0116$ \\
+UnsignedScalar & $0.5497 \pm 0.0027$ \\
+SignedScalar & $0.6207 \pm 0.0041$ \\
+ContextConditioned & $0.7350 \pm 0.0048$ \\
+AttentionCalibrator & $0.7238 \pm 0.0053$ \\
+ContextMatchFreq & $0.6780 \pm 0.0036$ \\
+DeepAttn & $0.7299 \pm 0.0040$ \\
+TransformerMeta & $0.7544 \pm 0.0047$ \\
+Bayes & $0.7590 \pm 0.0044$ \\
+Oracle & $0.8263 \pm 0.0028$ \\
 \midrule
 \multicolumn{2}{c}{\textit{Privileged diagnostics (ground-truth decoded features)}} \\
 \midrule
-MetaAttn+Dec & $0.822 \pm 0.008$ \\
-MetaAttn+DecCtx & $0.822 \pm 0.008$ \\
+MetaAttn+Dec & $0.8240 \pm 0.0032$ \\
+MetaAttn+DecCtx & $0.8240 \pm 0.0032$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -109,22 +210,54 @@ MetaAttn+DecCtx & $0.822 \pm 0.008$ \\
 {\sloppy
 The table reads as a hierarchy that mirrors the theory: raw messages near
 chance, unsigned scalars low (Theorem~\ref{thm:nonneg}), signed scalars at
-$0.625$, context-conditioned scalars at $0.730$ (Theorem~\ref{thm:scalar}),
-full latent-convention inference at $0.758$, and the oracle at $0.825$.
+$0.6207$, context-conditioned scalars at $0.7350$ (Theorem~\ref{thm:scalar}),
+full latent-convention inference at $0.7590$, and the oracle at $0.8263$.
 Two notes. First, our initial \textsc{ContextConditioned} baseline
 silently collapsed to \textsc{SignedScalar}; we reimplemented it with
 Laplace-smoothed context-matching support agreement. Second, the
 diagnostic \textsc{MetaAttn+Dec} variants receive the true-convention-decoded
-bit at inference and reach the oracle ceiling ($0.822$ vs.\ $0.825$), so
+bit at inference and reach the oracle ceiling ($0.8240$ vs.\ $0.8263$), so
 the learned calibrator's remaining gap is representational, not a
 capacity problem. Finally, the hand-crafted
-\textsc{ContextConditioned} ($0.730 \pm 0.013$) has overlapping 95\% CIs
-with the higher-capacity \textsc{MetaAttn} ($0.722 \pm 0.013$), so the
-observed difference is not clearly separated at this sample size.
+\textsc{ContextConditioned} ($0.7350 \pm 0.0048$) and the higher-capacity
+\textsc{AttentionCalibrator} ($0.7238 \pm 0.0053$) have overlapping 95\%
+CIs, so the observed point-estimate ordering is not clearly separated at
+this sample size.
 
-A natural objection is that these baselines are too weak: a sufficiently
+A disclosure about the scalar baselines' functional form:
+\textsc{UnsignedScalar} and \textsc{SignedScalar} as implemented form
+a one-parameter sub-family --- each source enters through its support
+agreement rate, scaled by a single learned global multiplier (linear in
+the agreement rate, not its log-odds), signed in the second case. The
+strongest signed member of the richer per-source log-odds family ---
+weight $\log(\hat p/(1-\hat p))$ per source, parameter-free --- is
+decision-identical to \textsc{SignedScalar} on all 30 seeds (both
+$0.6207 \pm 0.0041$), so the scalar-class conclusion does not rest on
+the restricted form.
+
+We also tested stronger learned baselines, since a sufficiently
 expressive source${}\times{}$context meta-learner might match Bayes
-without generative machinery. \textsc{CtxLogReg} tests this: per-source
+without generative machinery.
+\textsc{DeepAttn}, a wider attention decoder ($d=256$), reaches
+$0.7299 \pm 0.0040$---no better than the smaller \textsc{MetaAttn}, so
+capacity is not the bottleneck. \textsc{TransformerMeta}, a
+self-attention meta-learner over the support set ($104{,}834$
+parameters, against \textsc{MetaAttn}'s $25{,}667$ at the same width
+$d=64$ --- not capacity-matched), reaches $0.7544 \pm 0.0047$. The
+paired gap to Bayes is small but statistically detectable
+($\Delta = -0.0046$, 95\% CI $[-0.0070, -0.0022]$, $d_z = -0.71$): we
+report it as a half-point deficit, not a tie, applying the same
+paired-CI standard here as to the smaller gaps in this paper. A
+sufficiently expressive sequence model can nearly match the Bayesian
+decoder here, but none of the learned methods we tried beats it.
+\textsc{ContextMatchFreq}, a nonparametric context-matching fallback,
+trails badly at $0.6780 \pm 0.0036$ (paired $\Delta = -0.0810
+\pm 0.0036$, $d_z = -8.30$): flexibility without the generative structure
+does not recover the lost accuracy. The decoder structure does the work,
+not capacity alone.
+
+\textsc{CtxLogReg} tests the same objection from the discriminative side
+(10-seed run): per-source
 logistic regression on the same $K=10$ support set, with the logit a
 context-dependent weight on the message,
 $w_0 + m\,(v_0 + v_1a_1 + v_2a_2 + v_{12}a_1a_2)$, which nests
@@ -132,31 +265,46 @@ $w_0 + m\,(v_0 + v_1a_1 + v_2a_2 + v_{12}a_1a_2)$, which nests
 eight conventions' decoding maps. It reaches only $0.637 \pm 0.007$,
 below \textsc{ContextConditioned} and Bayes with non-overlapping CIs.
 The result is not a regularisation artefact ($\lambda = 0.01$ and $0.1$
-agree; accuracy rises with $K$, $0.63 \to 0.71$ from $K=10$ to $50$). At
+agree at $K=10$). Accuracy does rise with support in a dedicated sweep
+($\lambda = 0.1$, 10 seeds): $0.534$ at $K=2$, $0.590$ at $K=5$,
+$0.637$ at $K=10$, $0.677$ at $K=20$, $0.713$ at $K=50$ --- more data
+helps the discriminative fit, without closing the gap to the structured
+methods at matched $K$. At
 $K=10$, expressiveness without the right inductive bias does not help.
 
 A further ablation isolates \emph{why} Bayes beats the scalar baselines,
 and answers the paper's central empirical question: does posterior
-uncertainty matter beyond point-estimate decoding?
-\textsc{EMDecoder} fits the same generative model by EM but decides with
-the MAP convention and a plug-in log-odds weight: $0.683 \pm 0.013$,
-\emph{below} \textsc{ContextConditioned}. Plugging the EM point estimates
-into the exact oracle log-odds formula recovers $0.732 \pm 0.010$,
-matching \textsc{ContextConditioned} but still $2.6$ points short of the
-posterior-predictive $0.758$ (non-overlapping 95\% CIs). The generative
-structure alone does not explain Bayes's performance: averaging over
-convention uncertainty does independent work, and committing to a single
-estimated convention (MAP recovery only $\approx 0.39$ at $K=10$) throws
-away a further $4.9$ points. Explicit context conditioning recovers much
-of the lost performance, but Bayesian inference over the latent
-generative convention provides an additional advantage from uncertainty
-marginalisation.
+uncertainty matter beyond point-estimate decoding? We decompose the gap
+on the Experiment~B streams (30 seeds; all comparisons paired; an
+earlier 10-seed sensitivity run gives the same ordering). The
+posterior's own MAP plug-in --- decide with the oracle log-odds formula
+at the grid posterior's MAP cell --- reaches $0.7530 \pm 0.0048$: full
+posterior averaging is worth only $0.6$ points over the posterior's own
+point estimate (paired $\Delta = +0.0060$, 95\% CI $[+0.0031, +0.0090]$).
+A posterior-mean plug-in (posterior means of $\rho, r$ under the MAP
+convention) does slightly worse, $0.7494 \pm 0.0052$.
+\textsc{EMDecoder}, which fits the same generative model by EM and
+decides with the MAP convention, reaches only $0.6870 \pm 0.0054$ ---
+and the decomposition shows the deficit is mostly not about point
+estimates at all. \textsc{EMDecoder}'s decision rule drops the fitted
+stability $\hat\rho$ from the plug-in weight; restoring it (the exact
+oracle formula at EM's estimates) recovers $0.7343 \pm 0.0038$, a paired
+gain of $4.7$ points (95\% CI $[+0.0438, +0.0508]$) attributable to the
+rule. The remainder is fit quality: EM's MAP convention is correct for
+$0.393 \pm 0.014$ of sources at $K=10$ (5,400 sources), against
+$0.640 \pm 0.014$ for the grid posterior's MAP on the same streams.
+Bayes's $7.2$-point margin over \textsc{EMDecoder} therefore decomposes
+as $\approx 4.7$ points of decision rule, $\approx 1.9$ points of
+convention recovery, and $\approx 0.6$ points of posterior averaging.
+Explicit context conditioning recovers much of the lost performance;
+Bayesian inference over the latent convention adds the rest, mostly by
+recovering conventions better than EM's point fit does.
 \par}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.8\columnwidth]{../figures/fig2_ablation.pdf}
-\caption{Representation ablation at $\rho \approx 1$, $K=10$. Error bars show $\pm 1$ std over 10 seeds. Unsigned scalars fail (Theorem~\ref{thm:nonneg}); signed scalars fix inversion but not context-dependence (Theorem~\ref{thm:scalar}).}
+\includegraphics[width=0.8\columnwidth]{../figures/fig2_ablation_n100.pdf}
+\caption{Representation ablation at $\rho \approx 1$, $K=10$. Error bars show 95\% CI over 30 seeds. Unsigned scalars fail (Theorem~\ref{thm:nonneg}); signed scalars fix inversion but not context-dependence (Theorem~\ref{thm:scalar}).}
 \label{fig:ablation}
 \end{figure}
 
@@ -177,29 +325,35 @@ generalisation to unseen conventions.
 \begin{table}[h]
 \centering
 \footnotesize
-\caption{Accuracy on held-out conventions vs.\ support size $K$; mean $\pm$ std over 10 seeds.}
+\caption{Accuracy on held-out conventions vs.\ support size $K$; mean $\pm$ 95\% CI over 30 seeds.}
 \label{tab:ksweep}
 \resizebox{\columnwidth}{!}{
-\begin{tabular}{rccccc}
+\begin{tabular}{rcccccc}
 \toprule
-$K$ & BayesUniv & BayesFam & MetaAttn & MetaMean & NoSupport \\
+$K$ & BayesUniv & BayesFam & ContextMatchFreq & MetaAttn & MetaMean & NoSupport \\
 \midrule
-1  & $0.588 \pm 0.014$ & $0.647 \pm 0.019$ & $0.543 \pm 0.016$ & $0.523 \pm 0.019$ & $0.475 \pm 0.032$ \\
-2  & $0.644 \pm 0.009$ & $0.687 \pm 0.015$ & $0.563 \pm 0.017$ & $0.559 \pm 0.013$ & $0.480 \pm 0.035$ \\
-5  & $0.711 \pm 0.014$ & $0.741 \pm 0.014$ & $0.598 \pm 0.015$ & $0.578 \pm 0.012$ & $0.480 \pm 0.039$ \\
-10 & $0.767 \pm 0.009$ & $0.786 \pm 0.010$ & $0.616 \pm 0.024$ & $0.589 \pm 0.009$ & $0.483 \pm 0.034$ \\
-20 & $0.793 \pm 0.011$ & $0.805 \pm 0.010$ & $0.635 \pm 0.032$ & $0.603 \pm 0.014$ & $0.490 \pm 0.032$ \\
-50 & $0.820 \pm 0.006$ & $0.822 \pm 0.006$ & $0.641 \pm 0.028$ & $0.621 \pm 0.016$ & $0.484 \pm 0.029$ \\
+1  & $0.5865 \pm 0.0052$ & $0.6423 \pm 0.0053$ & $0.4981 \pm 0.0025$ & $0.5448 \pm 0.0058$ & $0.5335 \pm 0.0069$ & $0.4789 \pm 0.0121$ \\
+2  & $0.6446 \pm 0.0052$ & $0.6880 \pm 0.0051$ & $0.5333 \pm 0.0030$ & $0.5627 \pm 0.0057$ & $0.5588 \pm 0.0045$ & $0.4854 \pm 0.0131$ \\
+5  & $0.7118 \pm 0.0049$ & $0.7422 \pm 0.0049$ & $0.5968 \pm 0.0035$ & $0.5931 \pm 0.0061$ & $0.5822 \pm 0.0072$ & $0.4813 \pm 0.0144$ \\
+10 & $0.7626 \pm 0.0036$ & $0.7824 \pm 0.0039$ & $0.6660 \pm 0.0038$ & $0.6131 \pm 0.0075$ & $0.5975 \pm 0.0071$ & $0.4860 \pm 0.0126$ \\
+20 & $0.7911 \pm 0.0032$ & $0.8043 \pm 0.0030$ & $0.7260 \pm 0.0036$ & $0.6302 \pm 0.0089$ & $0.6116 \pm 0.0079$ & $0.4870 \pm 0.0126$ \\
+50 & $0.8176 \pm 0.0030$ & $0.8204 \pm 0.0029$ & $0.7921 \pm 0.0035$ & $0.6427 \pm 0.0106$ & $0.6257 \pm 0.0104$ & $0.4832 \pm 0.0127$ \\
 \bottomrule
 \end{tabular}
 }
 \end{table}
 
 Both Bayesian variants rise monotonically with $K$, converging to
-approximately $0.82$ at $K=50$, which is, up to noise, the information
-ceiling $\mathbb{E}[r] = 0.825$. The neural calibrators climb from chance
-to $0.62$--$0.64$ and then flatline, a gap of roughly 18 percentage points
-at $K=50$ under the tested conditions. We do not claim this bounds learned
+approximately $0.82$ at $K=50$ ($0.8204 \pm 0.0029$), which is, up to
+noise, the information ceiling $\mathbb{E}[r] = 0.825$. The neural
+calibrators climb from chance to $0.63$--$0.64$ and then flatline, a gap
+of roughly 18 percentage points at $K=50$ under the tested conditions.
+\textsc{ContextMatchFreq} is the surprise second-best here: $0.7921 \pm
+0.0035$ at $K=50$, well above the neural methods, though still clearly
+below both Bayesian variants. The wider \textsc{DeepAttn} calibrator,
+present in the run files but omitted from the table, plateaus alongside
+\textsc{MetaAttn} ($0.641$ at $K=50$), so the plateau is not specific
+to the smaller attention model. We do not claim this bounds learned
 calibrators in general; with matched support information and modest
 capacity, structure beats learning here.
 
@@ -215,10 +369,7 @@ capacity, structure beats learning here.
 $\rho \in [0.99, 1.0]$. The three regimes are
 \emph{mean-matched}: homogeneous $r \in [0.79, 0.81]$, moderate $r \in
 [0.70, 0.90]$, heterogeneous $r \in [0.65, 0.95]$, all with
-$\mathbb{E}[r] = 0.80$. This matching matters: an earlier version of this
-experiment let the heterogeneous regime have lower mean reliability as
-well, so its performance drop could have been blamed on the level rather
-than the spread. With the means matched, any remaining difference across
+$\mathbb{E}[r] = 0.80$. This matching matters: with the means matched, any remaining difference across
 regimes is attributable to the \emph{spread} of reliabilities alone.
 
 \begin{table}[h]
@@ -268,19 +419,19 @@ increases with $N$ because more i.i.d.\ draws are combined.
 \begin{table}[h]
 \centering
 \footnotesize
-\caption{Group accuracy vs.\ number of agents under mixed conventions; mean $\pm$ std over 10 seeds.}
+\caption{Group accuracy vs.\ number of agents under mixed conventions; mean $\pm$ 95\% CI over 30 seeds.}
 \label{tab:consensus}
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{rcccc}
 \toprule
 $N$ & Naive & MetaAttn & Bayes & Oracle \\
 \midrule
-2  & $0.522 \pm 0.064$ & $0.742 \pm 0.061$ & $0.760 \pm 0.038$ & $0.825 \pm 0.062$ \\
-3  & $0.528 \pm 0.049$ & $0.805 \pm 0.066$ & $0.798 \pm 0.056$ & $0.888 \pm 0.043$ \\
-4  & $0.562 \pm 0.038$ & $0.832 \pm 0.059$ & $0.862 \pm 0.050$ & $0.910 \pm 0.042$ \\
-6  & $0.575 \pm 0.062$ & $0.852 \pm 0.059$ & $0.883 \pm 0.047$ & $0.953 \pm 0.017$ \\
-8  & $0.590 \pm 0.048$ & $0.903 \pm 0.027$ & $\mathbf{0.932 \pm 0.031}$ & $0.968 \pm 0.028$ \\
-12 & $0.573 \pm 0.061$ & $0.937 \pm 0.033$ & $\mathbf{0.955 \pm 0.019}$ & $0.995 \pm 0.008$ \\
+2  & $0.5189 \pm 0.0208$ & $0.7350 \pm 0.0194$ & $0.7700 \pm 0.0159$ & $0.8228 \pm 0.0174$ \\
+3  & $0.5428 \pm 0.0286$ & $0.7750 \pm 0.0210$ & $0.7967 \pm 0.0207$ & $0.8839 \pm 0.0193$ \\
+4  & $0.5439 \pm 0.0204$ & $0.8283 \pm 0.0194$ & $0.8428 \pm 0.0188$ & $0.9128 \pm 0.0150$ \\
+6  & $0.5494 \pm 0.0247$ & $0.8583 \pm 0.0180$ & $0.8761 \pm 0.0127$ & $0.9450 \pm 0.0087$ \\
+8  & $0.5811 \pm 0.0256$ & $0.8894 \pm 0.0169$ & $0.9183 \pm 0.0135$ & $0.9678 \pm 0.0101$ \\
+12 & $0.5739 \pm 0.0197$ & $0.9239 \pm 0.0173$ & $\mathbf{0.9489 \pm 0.0114}$ & $0.9917 \pm 0.0039$ \\
 \bottomrule
 \end{tabular}
 }
@@ -289,19 +440,55 @@ $N$ & Naive & MetaAttn & Bayes & Oracle \\
 Naive averaging sits near chance at every $N$: its sign \emph{is} the
 majority vote, so the two coincide and we report a single column.
 Both calibrated methods rise sharply with $N$; at $N=12$,
-Bayes is within $4.0$ points of the oracle and $38.2$ points above
-naive averaging. Bayes and MetaAttn have overlapping confidence intervals
-at small $N$ ($0.805$ vs.\ $0.798$ at $N=3$, std $\approx 0.06$), so the
-observed difference is not clearly separated at this sample size;
-their point estimates separate from $N=8$ in Bayes's favour, though the gap
-remains within noise through $N=12$. As $N$ grows the naive-to-calibrated
-gap widens: more agents help only if you can decode them.
+Bayes is within $4.3$ points of the oracle ($0.9489$ vs.\ $0.9917$) and
+$37.5$ points above naive averaging ($0.5739$). Bayes leads the learned
+\textsc{MetaAttn} at every group size, by 1.4 to 3.5 points; the paired
+95\% CIs exclude zero throughout, but with Cohen's $d_z$ between $-0.39$
+and $-0.73$ these are modest effects, not decisive separations. As $N$
+grows the naive-to-calibrated gap widens: more agents help only if you
+can decode them.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.8\columnwidth]{../figures/fig5_consensus.pdf}
-\caption{Multi-agent consensus accuracy vs.\ number of agents. Error bars show $\pm 1$ std over 10 seeds.}
+\includegraphics[width=0.8\columnwidth]{../figures/fig5_consensus_n100.pdf}
+\caption{Multi-agent consensus accuracy vs.\ number of agents. Error bars show 95\% CI over 30 seeds.}
 \label{fig:consensus}
+\end{figure}
+
+\subsection{Calibration}
+
+Accuracy is only half the story: the Bayesian aggregator returns
+probabilities, so the re-run experiments also record negative
+log-likelihood, Brier score, and expected calibration error (ECE, 10
+equal-width bins). In the stability sweep (Figure~\ref{fig:calibration}),
+Bayes has the best NLL and Brier score at every $\rho$ (at $\rho=1.0$:
+NLL $0.5480 \pm 0.0018$, Brier $0.1820 \pm 0.0008$). Its ECE, however,
+rises with stability, from $0.0170 \pm 0.0012$ at $\rho=0.5$ to $0.0836
+\pm 0.0020$ at $\rho=1.0$: as conventions stabilise, the posterior
+concentrates and grows overconfident. At $\rho=1.0$ the learned
+\textsc{MetaAttn} is actually the better-calibrated of the two (ECE
+$0.0587 \pm 0.0024$)---the Bayesian posterior's overconfidence at high
+stability is a genuine weakness, not shared by the discriminative
+calibrator.
+
+In the ablation (Experiment~B) the oracle is the best calibrated by far
+(ECE $0.0105 \pm 0.0012$), with Bayes at $0.0837 \pm 0.0044$. In
+consensus, the two methods' calibration moves in opposite directions as
+the group grows: Bayes's ECE falls from $0.1359 \pm 0.0108$ at $N=2$ to
+$0.0614 \pm 0.0044$ at $N=12$---more independent sources genuinely
+sharpen the posterior---while \textsc{MetaAttn}'s ECE rises steeply from
+$0.1443 \pm 0.0112$ to $0.3389 \pm 0.0160$. The learned aggregator's
+probabilities degrade as the group grows even while its accuracy
+improves. Calibration is thus a second axis on which the methods differ,
+and a real limitation of the current Bayesian aggregator: without
+recalibration, its probabilities should not be taken at face value at
+high convention stability.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{../figures/fig_calibration_n100.pdf}
+\caption{Expected calibration error (mean $\pm$ 95\% CI) in the stability sweep (left) and the ablation (right). Bayes is the best-scoring probabilistically but grows overconfident as conventions stabilise; in consensus (not shown) its ECE falls with group size while the learned calibrator's rises.}
+\label{fig:calibration}
 \end{figure}
 
 \subsection{Candidate-set misspecification}
@@ -377,3 +564,246 @@ other). The problem itself gets harder under correlation, and Bayes is
 not disproportionately hurt: the ranking Bayes ${} > {}$
 \textsc{ContextConditioned} ${} > {}$ \textsc{SignedScalar} ${} > {}$
 naive is preserved in both arms.
+
+\subsection{LLM communication benchmark}
+
+As a step beyond simulation, we instantiate the five-source population
+with a real language model. Each source is an independent
+\texttt{gpt-4o-mini} session given one of five induced conventions: A
+answers truthfully; B negates every belief; C negates exactly when a
+random context flag is 1; D answers truthfully but carelessly (about 15\%
+of answers flipped); E answers truthfully on science/nature questions and
+negates everything else. The model is \emph{told} its private belief on
+each proposition (correct with probability $0.85$), so the experiment
+tests convention-following and decoding, not the model's factual
+knowledge: a controlled communication benchmark, not a claim about
+real-world deployment. We use 120 verifiable propositions, $K=8$ labelled
+support answers per source and $Q=20$ queries per trial, over 20 trials;
+the Bayesian aggregator reuses the synthetic convention family directly
+on the parsed Yes/No bits. Its candidate set in the released code is
+$\{0, 1, 2, 3, 8\}$, which cannot express source E's topic-conditioned
+rule: E's mapping is a function of the proposition's topic, not of the
+context bits the synthetic family flips on.
+
+Decoding conventions helps enormously. We report this run as a
+\emph{pre-fix-harness} result: the numbers below were banked before the
+harness defects described in the caveats were found; the banked
+``oracle'' was handed an inverted rule for source E and is beaten by
+every decoder, so it is not an upper bound and we do not treat it as
+one; and the numbers are not reproducible from the released (fixed)
+code. Raw API outputs from the original run were not retained; the
+released harness now saves them. Mean accuracy $\pm$ 95\% t-CI over
+the 20 trials: \textsc{SignedScalar} $0.9950 \pm 0.0072$,
+\textsc{ContextConditioned} $0.9900 \pm 0.0096$,
+\textsc{Bayes} $0.9875 \pm 0.0104$, nominal Oracle $0.9800 \pm 0.0140$, and
+\textsc{NaiveMean} $0.8175 \pm 0.0451$. Paired gains over the naive mean
+are $+0.1775 \pm 0.0477$ ($d_z = 1.74$),
+$+0.1725 \pm 0.0483$ ($d_z = 1.67$),
+$+0.1700 \pm 0.0477$ ($d_z = 1.67$) and
+$+0.1625 \pm 0.0491$ ($d_z = 1.55$) respectively: about seventeen points,
+with every interval well clear of zero. Near-ceiling accuracies leave
+little headroom between the decoders themselves, so this experiment
+separates decoding from not decoding rather than ranking the decoders.
+
+Two caveats. First, convention adherence (fraction of support
+messages matching the induced rule) was high for A--D ($0.925$, $0.950$,
+$0.938$, $0.888$), but the diagnostic for E read $0.100$. Auditing the
+code showed the benchmark's expected rule for E was inverted relative to
+its prompt: it checked negate-on-science where the prompt says
+truthful-on-science. Under the inverted check a perfectly compliant
+source would read near zero --- not exactly zero, since the model's own
+errors blur the reading --- so $0.100$ is consistent with high
+compliance with the prompt as written; it does not pin compliance at
+any precise figure such as 90\%. The failure was in our harness, not
+the model, and the mapping is fixed in the released code. Because E's
+true rule was also missing from every decoder's candidate set, the
+decoders solved a harder problem than the design intended; the
+direction of the resulting bias on the decoder gaps is not determined,
+and we do not claim the gaps are conservative. Second, the
+private beliefs here are supplied, so this says nothing about extracting
+beliefs the model actually holds; it validates the aggregation machinery
+given convention-following speakers.
+
+\subsection{Real human judgments}
+
+As a check on genuine human data, we aggregate the CIFAR-10H judgments
+\cite{peterson2019human}: roughly 51 category labels for each of the
+10,000 CIFAR-10 test images from 2,571 annotators (514,200 judgments
+after attention checks are removed; every annotator labels exactly 200
+images, and all 2,571 workers had estimation-half observations). We split
+the images into disjoint estimation and evaluation halves of 5,000, fit
+per-worker confusion matrices on the estimation half with the CIFAR-10
+gold labels, and aggregate each evaluation image's annotations to predict
+its gold label. Five rules are compared: \textsc{MajorityVote},
+accuracy-weighted voting (scalar reliability weights), a Bayesian rule
+using plug-in smoothed confusion matrices (\textsc{BayesDirichlet}; no
+integration over matrix uncertainty), Dawid--Skene
+EM~\cite{dawid1979} warm-started from the estimation-half confusion
+counts and iterated to convergence --- the label posterior is
+recomputed from the current confusion matrices at every iteration
+(5 iterations in the full regime, 92 in the five-judgment regime) ---
+and an oracle using confusion matrices fit on all data. Mean accuracy $\pm$ 95\%
+CI over the 5,000 evaluation images, with paired deltas against majority
+vote reported below:
+
+{\small
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Method & $\sim$51 judgments & 5 judgments \\
+\midrule
+\textsc{MajorityVote} & $0.9924 \pm 0.0024$ & $0.9844 \pm 0.0034$ \\
+\textsc{AccuracyWeighted} & $0.9926 \pm 0.0024$ & $0.9846 \pm 0.0034$ \\
+\textsc{BayesDirichlet} & $0.9930 \pm 0.0023$ & $0.9842 \pm 0.0035$ \\
+\textsc{DawidSkene} & $0.9928 \pm 0.0023$ & $0.9850 \pm 0.0034$ \\
+Oracle & $0.9960 \pm 0.0017$ & $0.9878 \pm 0.0030$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+}
+
+Paired deltas against majority vote (mean $\pm$ 95\% CI) are tiny: with all
+judgments, $+0.0002 \pm 0.0004$ (accuracy-weighted), $+0.0006 \pm 0.0010$
+(BayesDirichlet), $+0.0004 \pm 0.0008$ (DawidSkene), and $+0.0036 \pm 0.0017$
+(oracle). With five judgments the deltas are $+0.0002 \pm 0.0012$,
+$-0.0002 \pm 0.0014$, $+0.0006 \pm 0.0014$, and $+0.0034 \pm 0.0017$.
+
+This is nearly a null result, and that is
+informative. CIFAR-10H annotators are individually strong (mean accuracy
+$0.949$), so majority vote already reaches $0.9924$, and no
+source-modelling method adds anything measurable: every paired interval
+covers zero. Even the oracle, with perfect knowledge of every worker,
+gains only about a third of a point. The five-judgment regime---the
+realistic crowdsourcing budget---tells the same story at $0.9844$.
+This is the boundary condition the thesis predicts rather than a
+failure of it: the large synthetic gains (Experiment~E's $+37.5$ points
+over naive averaging) come from heterogeneous, unreliable sources, and
+these annotators are neither. The experiment's value is in showing the
+machinery does not manufacture an advantage where none exists.
+
+Two scope notes. First, this tests only the reliability-heterogeneity
+half of the thesis---workers differ in accuracy and confusion patterns,
+but everyone answers in the same ten-way format, so there is nothing to
+decode. The convention-encoding half is not exercised by this dataset;
+it is tested on real data in Section~\ref{sec:validation}. Second, the gold labels here are the CIFAR-10 test
+labels; on genuinely ambiguous images the ``correct'' answer is itself
+contested, which is one more reason not to over-read small gaps.
+
+An audit-repair note: every dataset statistic quoted in this section
+(514,200 judgments; 2,571 annotators; exactly 200 judgments per
+annotator; mean worker accuracy $0.949$, computed as $0.9487$) was
+recomputed from the raw CIFAR-10H release for this revision, and the
+Dawid--Skene baseline was re-implemented as genuine iterated EM (an
+earlier released version computed the label posterior once and never
+iterated it). The repair changes only the five-judgment
+\textsc{DawidSkene} figure ($0.9846 \to 0.9850$); the full-regime
+predictions are identical, and no conclusion in this section moves.
+
+\subsection{Independent validation: mechanism, real conventions, failure map}
+\label{sec:validation}
+
+The experiments above are the paper's own. As a post-repair check we
+ran a separate validation programme (PVI-REAL; code and outputs in
+\texttt{code/pvi\_real}, \texttt{results/pvi\_real}) against
+hypotheses fixed before the runs: (H1)~real sources' behaviour varies
+by context, including sign flips; (H2)~the scalar failure grows with
+measured heterogeneity; (H3)~the decoder recovers conventions from
+support with quantifiable sample efficiency; (H4)~the advantage is
+mediated by source identity and context (ablations must destroy it);
+(H5)~the effect survives on real data.
+
+\paragraph{Mechanism under controlled panels.}
+We re-ran the paper's generative machinery as a virtual panel study:
+five regimes (low heterogeneity; fixed inversion; context
+conventions; a boundary mix; emergent drifting conventions), 40
+panels of six sources per regime, 40 shared query items, support
+nested at $K \in \{0,2,5,10,20,40\}$, with Majority, both scalars,
+ContextMatchFreq, a per-context transition-matrix method
+(PerContextTM), the grid Bayes of Section~5, and an oracle. Controls
+behave as the theory requires: at low heterogeneity the scalar is
+best (log loss $0.094$ vs.\ the decoder's $0.117$) and under fixed
+inversion it wins outright ($0.154$/$0.938$), while Majority
+collapses ($0.614$ accuracy). Where conventions vary by context the
+decoder's advantage is large and dose-responsive: at $K{=}20$, log
+loss $0.269$ vs.\ the scalar's $0.488$ and accuracy $0.886$ vs.\
+$0.781$; in the emergent regime, $0.327$/$0.848$ vs.\ $0.687$/$0.666$.
+The panel-level advantage regresses on measured heterogeneity with
+slope $0.73$ $[0.65, 0.81]$, and the slope survives within the
+context regime alone ($1.14$ $[0.58, 1.60]$), so it is not an artefact
+of contrasting regimes. Shuffling source identities destroys $366\%$
+of the advantage (the decoder falls \emph{below} the scalar),
+shuffling contexts $215\%$, and a placebo context bit exactly the
+$75\%$ attributable to the real second context (H4). The decoder
+closes $80\%$ (context) to $91\%$ (emergent) of the scalar-to-oracle
+log-loss gap by $K{=}40$, reaches the scalar's $K{=}40$ log loss by
+$K{=}5$ in the context regime, and loses to the scalar in only 3 of
+40 context panels---the lowest-heterogeneity ones. A power analysis
+on these panels sizes a human replication at $\approx$15 panels per
+arm. This arm validates estimator behaviour and internal
+consistency; by construction it cannot validate the shape of real
+conventions.
+
+\paragraph{Real conventions in human judgments (CrowdTruth).}
+The CIFAR-10H study above cannot test the convention half of the
+thesis: its contexts are unrecorded and its format uniform. The
+CrowdTruth medical relation corpus~\cite{crowdtruthmedical} records
+both: crowd workers judged candidate cause/treat relations in
+medical sentences, with expert labels, across two microtasks
+(relation extraction, RelEx; direction construction, RelDir) and
+two annotation channels. Taking contexts as (relation family
+$\times$ channel) and a labelled support/query split of items, the
+premise is directly measurable (H1): among workers with $\geq$15
+judgments in each family, the median absolute cross-family accuracy
+gap is $0.155$, and $37\%$ are above chance in one family and below
+it in the other---real sources do flip by context. We evaluate the
+paper's decoding principle in its scalable form, a
+context-conditioned log-odds aggregator whose per-(source, context)
+weights are shrunk toward the source's scalar weight, with one
+temperature per method fitted by cross-fitting on the support only
+(no query data is touched in fitting); the full grid Bayes is not
+applicable here because these contexts are item families, not the
+involutive family of Section~3. On RelEx (5,564 judgments, 497
+items, 67 workers, 20 splits), the calibrated context decoder beats
+the identically calibrated scalar on every metric: log loss $0.395$
+vs.\ $0.430$ (paired advantage $+0.035$ $[0.028, 0.041]$), accuracy
+$0.830$ vs.\ $0.807$ ($+2.3$ points $[1.7, 3.0]$), calibration error
+$0.087$ vs.\ $0.094$; Majority scores $0.719$/$0.682$ and
+Dawid--Skene $1.62$/$0.774$. Uncalibrated, both weighted methods are
+severely overconfident (ECE $\approx 0.145$) and the context method
+\emph{loses} on log loss---calibration is part of the method, not a
+patch. Effects are context-specific and are reported per context as
+a matter of policy: the RelEx gain is carried by treat items
+($+4.0$ $[3.3, 4.6]$) with cause items null ($-0.2$ $[-1.3, +1.0]$).
+On RelDir (4,481 judgments, 751 items, 77 workers) the same frozen
+pipeline replicates with a larger effect---log-loss advantage
+$+0.101$ $[0.098, 0.105]$, accuracy $+3.4$ points $[2.6, 4.2]$,
+gains in both families (cause $+4.6$ $[3.5, 5.7]$, treat $+2.0$
+$[1.0, 2.9]$)---while Dawid--Skene collapses below chance
+($0.374$). Two scope notes: both tasks share one dataset family and
+domain (medical text), so a different-domain replication is still
+owed; and ChaosNLI, an obvious candidate, is unusable for any
+per-source study---its release contains no annotator identifiers,
+which we verified item by item.
+
+\paragraph{Adversarial failure map.}
+Four regimes probe the assumptions directly (40 panels each). (i)
+\emph{Out-of-set conventions}: sources use the pattern
+$\text{parity} = 1 - a_2$, outside the candidate set; per-cell
+methods win (ContextMatchFreq log loss $0.266$, PerContextTM
+$0.258$, decoder $0.590$, scalar $0.744$)---the candidate set is
+load-bearing, though misspecification degrades the decoder to
+``better than scalar'' rather than to uselessness. (ii)
+\emph{Reliability-only context}: reliability varies by context with
+no flips; Majority is near-oracle ($0.348$/$0.844$) and context
+machinery only adds variance---the thesis's regime is sign-changing
+conventions, and outside it there is nothing to win. (iii)
+\emph{Drift}: stability decays from $0.95$ (support) to $0.60$
+(query); the decoder remains best on accuracy but at $K{=}40$ its
+log loss ($0.461$) slips behind ContextMatchFreq ($0.421$)---stale
+support buys confidence in parameters that have moved. (iv)
+\emph{Mimic-then-flip}: sources behave as identity on support and
+flip on queries; every support-based method collapses to chance
+accuracy with log loss $1.3$--$2.9$, against a query-truth oracle at
+$0.089$/$0.967$. The stationarity assumption---conventions persist
+from support to query---is thus not a caveat but a priced
+precondition of the entire approach, ours included.

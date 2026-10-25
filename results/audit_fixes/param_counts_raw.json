@@ -1,0 +1,36 @@
+{
+ "experiment": "param_counts",
+ "runtime_seconds": 0.10329747200012207,
+ "models": [
+  {
+   "model": "MetaAttn",
+   "config": "d=64, sup_in=4, qry_in=3 (pvi_experiments.MetaAttn defaults)",
+   "total_params": 25667,
+   "trainable_params": 25667
+  },
+  {
+   "model": "MetaAttn+Dec",
+   "config": "d=64, sup_in=5, qry_in=4",
+   "total_params": 25795,
+   "trainable_params": 25795
+  },
+  {
+   "model": "MetaAttn+DecCtx",
+   "config": "d=64, sup_in=13, qry_in=12",
+   "total_params": 26819,
+   "trainable_params": 26819
+  },
+  {
+   "model": "TransformerMeta",
+   "config": "d=64, nhead=4, nlayers=2, dim_feedforward=256, sup_in=4, qry_in=3 (upgrade_n100.TransformerMeta defaults)",
+   "total_params": 104834,
+   "trainable_params": 104834
+  },
+  {
+   "model": "DeepAttn",
+   "config": "d=256, sup_in=4, qry_in=3 (upgrade_n100.DeepAttn defaults)",
+   "total_params": 594947,
+   "trainable_params": 594947
+  }
+ ]
+}

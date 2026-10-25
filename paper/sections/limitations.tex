@@ -10,13 +10,55 @@ assumption with correlated errors and finds the ranking preserved, but
 only one correlation structure was tested. Conventions are static;
 drifting codes would need online inference, which we do not attempt.
 
-The evaluation is synthetic throughout: no LLM debate, robot teams, or
-sensor fusion, and the benchmark is not a substitute. The statistics are
-exploratory over ten seeds---enough to tell stable gaps from noise, not
+The core evaluation is synthetic, plus one controlled
+LLM-communication benchmark in which the models' private beliefs are
+supplied rather than elicited, real-human-judgment studies on
+CIFAR-10H and on two CrowdTruth tasks, a controlled-panel
+validation, and an adversarial suite (Section~\ref{sec:validation}):
+no LLM debate, robot teams,
+or sensor fusion, and none of these is a substitute for those. An LLM
+debate experiment with emergent conventions---incentive-based personas
+rather than instructed rules, agents using their own knowl\-edge---is
+designed and coded (\texttt{code/llm\_debate.py}) as immediate future
+work. The CIFAR-10H study, moreover, exercises only the
+reliability-heterogeneity half of the thesis---its annotators share one
+response format, so there is no convention to decode. The CrowdTruth
+studies do exercise the convention half---workers' affirmation
+behaviour flips across relation families---but through a scalable
+log-odds decoder rather than the grid Bayes of the synthetic
+benchmark, on one dataset family in one domain (medical text); a
+different-domain replication, and a human panel experiment with
+induced conventions, remain future work (protocols in the
+repository). The adversarial suite also prices the static-convention
+assumption directly: under drift the decoder's accuracy degrades
+gracefully but stale support inflates its confidence, and under an
+abrupt convention switch between support and query every
+support-based method fails. The statistics are
+exploratory---100 seeds for Experiment~A, 30 for Experiments~B, C, E,
+and I, ten for the rest---enough to tell stable gaps from noise, not
 enough for confirmatory claims.
 
-On the method: the grid is coarse ($\rho$ in steps of $0.1$, $r$ in steps
+A recent deployment datapoint is suggestive of the same failure mode
+outside simulation. Anthropic's Sonnet~5.5 system card reports
+FrontierCode scores of 52.1\% at \texttt{xhigh} effort and 46.2\% at
+\texttt{max} effort~\cite{anthropic2026sonnet55card}; the card
+reports the scores without attributing the gap to any mechanism.
+Secondary coverage of the release attributes the drop to the
+multi-agent code review invoked at maximum effort, whose review
+subagents sometimes timed out or made out-of-scope edits. We cite the
+datapoint as an analogy --- more reviewers, worse outcome --- not as
+evidence for our mechanism: it is not a controlled comparison, and it
+does not isolate the noise-not-signal effect our $\rho=0.5$ result
+identifies.
+
+The learned baselines were each run in a single, untuned training
+configuration, and the LLM benchmark's banked numbers were produced by
+a pre-fix harness version (labelled as such in \S6.11); both carry
+that scope. On the method: the grid is coarse ($\rho$ in steps of $0.1$, $r$ in steps
 of $0.05$), though a resolution sweep moves every headline number by at
 most $0.004$ (Appendix~\ref{app:robustness}); the priors are flat, and
-posterior concentration at small $K$ is moderate. The claim is about
-decoding versus weighting, not optimal grid design.
+posterior concentration at small $K$ is moderate. Calibration is
+reported (NLL, Brier, ECE) but not corrected: the Bayesian posterior is
+overconfident at high convention stability, and we leave recalibration
+to future work. The claim is about decoding versus weighting, not optimal
+grid design.

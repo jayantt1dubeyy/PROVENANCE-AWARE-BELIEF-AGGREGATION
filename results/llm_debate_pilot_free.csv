@@ -1,0 +1,6 @@
+trial,method,acc
+0,NaiveMean,0.8
+0,SignedScalar,0.8
+0,ContextConditioned,0.8
+0,Bayes,0.8
+0,PopMap,0.8

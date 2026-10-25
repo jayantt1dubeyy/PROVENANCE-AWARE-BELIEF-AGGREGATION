@@ -1,17 +1,20 @@
 \section{Related Work}
+\label{sec:related}
 
 \subsection{Trust and reputation in multi-agent systems}
 
 The dominant paradigm for handling source differences is trust and
-reputation, and it is almost entirely about reliability. TRAVOS~\cite{teacy2006}
-estimates the probability that a source provides accurate information;
-the Beta reputation system maintains Bayesian posteriors over
-trustworthiness; FIRE, Regret, and BLADE extend the idea to witness
-reputation and roles. Every one of these models \emph{how often}
-a source is right, a scalar reliability parameter. That is the gap we work
-in: a source can be maximally reliable under every one of these
-frameworks and still be unreadable, because reliability and convention are
-different things.
+reputation, and for this lineage the scalar characterization is fair.
+TRAVOS~\cite{teacy2006} estimates the probability that a source provides
+accurate information from its track record; the Beta reputation
+system~\cite{josang2001} maintains Bayesian posteriors over
+trustworthiness; FIRE~\cite{huynh2006fire}, REGRET~\cite{sabater2002regret},
+and BLADE~\cite{regan2006blade} extend the idea to witness reputation,
+social structure, and learned accuracy models. Each of these models, in
+the end, \emph{how often} a source is right. That is the gap we work in:
+a source can be maximally reliable under every one of these frameworks
+and still be unreadable, because reliability and convention are different
+things.
 
 \subsection{Opinion dynamics and social learning}
 
@@ -20,45 +23,88 @@ Classical opinion dynamics, DeGroot~\cite{degroot1974} and
 Friedkin--Johnsen~\cite{friedkin1999}, aggregate through nonnegative
 influence weights: exactly the class our Theorem~\ref{thm:nonneg} rules
 out for inverted conventions. Bayesian social learning~\cite{acemoglu2011}
-asks when networks converge to the truth, but takes the mapping from
-state to signal as fixed and common knowledge. We study what happens when
-that mapping is private, heterogeneous, and has to be inferred.
+and naive learning in networks~\cite{golub2010} ask when networks
+converge to the truth, but take the mapping from state to signal as fixed
+and common knowledge. We study what happens when that mapping is private,
+heterogeneous, and has to be inferred.
 \par}
 
-\subsection{Truth discovery}
+\subsection{Crowdsourcing, truth discovery, and label noise}
 
-Truth discovery methods~\cite{dong2009,yin2008,pasternack2011} jointly
-estimate latent truth and source reliability from conflicting claims. Each
-source still gets a scalar weight, and the weights still determine the
-aggregation. Convention heterogeneity breaks this parameterisation from
-the inside: the correct ``weight'' of a source is not a scalar at all but
-a context-dependent decoding of the message. Truth discovery asks who to
-trust. We are asking what they meant.
+The closest technical relatives of our model live here, and honesty
+requires placing the model inside that lineage rather than beside it.
+The founding model is Dawid and Skene's~\cite{dawid1979}: each observer
+is characterised by a full confusion matrix, estimated by EM --- there
+is no scalar weight anywhere in it. The lineage that followed is a
+sequence of structured per-annotator response models: GLAD~\cite{whitehill2009glad}
+(per-annotator expertise interacting with item difficulty), Raykar
+et al.~\cite{raykar2010} (per-annotator sensitivity and specificity),
+Raykar and Yu~\cite{raykar2012} (who note that annotators with
+sensitivity plus specificity below one are negatively informative and
+can be reversed by EM --- prior art, in the context-free case, for our
+inverted sources), IBCC~\cite{kim2012ibcc} (Bayesian classifier
+combination with Dirichlet priors over the confusion matrices), and,
+inside truth discovery proper, Zhao et al.~\cite{zhao2012bayesian} (a
+Bayesian generative model with distinct per-source false-positive and
+false-negative rates), alongside the truth-discovery methods
+of~\cite{dong2009,yin2008,pasternack2011}. The label-noise literature
+makes the same object central: a per-class transition matrix, estimated
+or inverted to correct the loss~\cite{natarajan2013,patrini2017}.
+
+Per (source, context), our $(c,\rho,r)$ model induces exactly a binary
+symmetric channel --- a strict special case of one such transition
+matrix, as Section~\ref{sec:formal} derives. We claim no new model
+class, and the scalar-weight characterization of our introduction
+applies to the trust lineage above and to weight-based opinion
+dynamics, not to this response-model literature. What that literature
+does not do is threefold. First, none of its response models is
+conditioned on an \emph{observable context} that changes the mapping
+itself: the confusion matrix is a property of the annotator, not of the
+(annotator, context) pair. Second, none ties the per-context channels
+through a finite family of mappings shared across sources --- the tying
+that makes estimation from $K=10$ labelled examples per source possible
+here, and a restriction a reader should price in. Third, none proves an
+impossibility statement --- that context-independent scalar aggregation
+cannot represent the Bayes rule once the mapping varies with observable
+context (Theorem~\ref{thm:scalar}) --- or characterizes the stability
+boundary at which per-source decoding stops paying (Experiment~I). Our
+contribution is that framing, the cross-context tying as a small-$K$
+inductive bias, and the boundary --- not a new response model. Truth
+discovery asks who to trust. We are asking what they meant, in contexts
+where what they meant changes with the context.
 
 \subsection{Robust and adversarial aggregation}
 
-Byzantine-tolerant aggregation~\cite{blanchard2017} and defences against
-adversarial federated learning~\cite{yin2018} handle sources that actively
-try to corrupt the outcome. Our setting is different: nobody is attacking
-anyone. The sources are honest and often highly reliable; they simply
-speak in different conventions, so there is no attacker to detect. What
-remains is a decoding problem, and reliability scores cannot see it.
+Byzantine-tolerant aggregation~\cite{blanchard2017} and
+Byzantine-robust distributed learning~\cite{yin2018} handle sources that
+actively try to corrupt the outcome. Our setting is different: nobody is
+attacking anyone. The sources are honest and often highly reliable; they
+simply speak in different conventions, so there is no attacker to detect.
+What remains is a decoding problem, and reliability scores cannot see it.
 
-\subsection{Information theory and pragmatics}
+\subsection{Signaling, conventions, and pragmatics}
 
-The framing grew out of partial information
-decomposition~\cite{williams2010,bertschinger2014}: does source identity carry information beyond message
-content? What survived is decision-theoretic -- our theorems target
-decision rules directly, since statistically real information
-($I(X;S\mid M) > 0$) need not imply decision value. The intuition is old
-in pragmatics: Gricean implicature~\cite{grice1975} treats speaker
-identity and context as constitutive of meaning; our conventions are a
-minimal formal version of that insight.
+The idea that a fixed signal can carry opposite conventional meanings is
+classical. Lewis's analysis of convention~\cite{lewis1969} and Skyrms's
+evolutionary account~\cite{skyrms1996} study signaling systems in which
+the same signal is associated with different states under different
+equilibria --- our direct and inverted mappings are the two-element
+case --- and cheap-talk theory~\cite{crawford1982} studies senders whose
+messages must be decoded through known biases. The framing of our model
+also grew out of partial information
+decomposition~\cite{williams2010,bertschinger2014}: does source identity
+carry information beyond message content? What survived is
+decision-theoretic --- our theorems target decision rules directly,
+since statistically real information ($I(X;S\mid M) > 0$) need not imply
+decision value. The intuition is old in pragmatics: Gricean
+implicature~\cite{grice1975} and relevance theory~\cite{sperber1995}
+treat speaker identity and context as constitutive of meaning; our
+conventions are a minimal formal version of that insight.
 
 \subsection{Multi-agent LLM systems}
 
-Recent work on LLM agents has explored debate protocols~\cite{du2023debate,
-liang2023debate}, round-table deliberation~\cite{chen2024reconcile},
+Recent work on LLM agents has explored debate protocols~\cite{du2024debate,
+liang2024debate}, round-table deliberation~\cite{chen2024reconcile},
 multi-agent evaluation~\cite{chan2024chateval}, and layered aggregation of
 proposals~\cite{wang2024moa}. These frameworks model source differences
 through confidence scores, voting, or an aggregator model's judgement, and

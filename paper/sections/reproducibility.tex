@@ -6,17 +6,54 @@ baselines, the smoke tests, and a brute-force unit test
 (\texttt{code/test\_predictive\_fix.py}) that checks the
 posterior-predictive log-odds against explicit enumeration. From the
 repository root, \texttt{python code/smoke\_test.py} verifies the core
-components in under ten seconds; \texttt{python code/run\_all\_n10.py}
-reproduces every table and figure in the paper (ten seeds; a few hours on
-a CPU-only machine). All randomness goes through a deterministic
+components in under ten seconds; \texttt{python code/upgrade\_n100.py}
+reproduces the n100 runs in two invocations ---
+\texttt{--only A --seeds 100} for Experiment~A and
+\texttt{--only BCE --seeds 30} for Experiments~B, C, and E --- with
+calibration metrics and the stronger baselines, while
+\texttt{code/run\_all\_n10.py} reproduces the remaining ten-seed
+experiments (a few hours on a CPU-only machine).
+\texttt{code/analyze\_n100.py} regenerates the confidence intervals and
+paired comparisons. The stability-boundary experiment (Section~6.3) is
+\texttt{code/boundary\_experiment.py} (torch-free; 30 seeds over the
+$\rho \times K$ grid, $\sim$5 minutes on CPU), with figures from
+\texttt{code/make\_figures\_expI.py}. The real-human-judgment study is
+\texttt{code/real\_world\_cifar10h.py}; it reads the public CIFAR-10H raw
+file (\texttt{cifar10h-raw.csv} from \texttt{jcpeterson/cifar-10h};
+point \texttt{CIFAR10H\_CSV} at your copy, or use
+\texttt{data/cifar10h-raw.csv} in the repo) and writes
+\texttt{results/real\_world\_cifar10h.csv} plus
+\texttt{results/real\_world\_cifar10h\_5judg.csv}, running in under a
+minute on a CPU. All randomness goes through a deterministic
 \texttt{SafeRNG} wrapper around Python's \texttt{random.Random}; PyTorch
 seeds are set before every model initialisation. The repository's
 \texttt{REPRODUCIBILITY.md} documents the environment, the per-experiment
 design, the baseline information budgets, and every correction applied
 during independent reproduction---including the posterior-predictive fix
 described in Section~\ref{sec:method}, which changed the estimator from a
-posterior expectation of log-odds to the exact predictive quantity. For
-double-blind review, the code and data are provided as anonymised
-supplementary material; the camera-ready version will carry a persistent
-DOI.
+posterior expectation of log-odds to the exact predictive quantity. The
+code and data are provided as supplementary material; a persistent DOI
+will be added.
+
+An audit-repair pass (October 2026) added \texttt{code/audit\_fixes/}:
+the genuine Dawid--Skene EM now used by
+\texttt{code/real\_world\_cifar10h.py} (the earlier released version
+computed the label posterior once and never iterated it), the 30-seed
+plug-in ablation of \S6.4 (grid-MAP and posterior-mean plug-ins,
+convention-recovery rates, the per-source log-odds scalar), the
+\textsc{CtxLogReg} support-size sweep, and exact parameter counts for
+the neural baselines; outputs are in \texttt{results/audit\_fixes/}.
+All CIFAR-10H descriptive statistics were recomputed from the raw
+release in the same pass. The LLM benchmark's released harness now
+saves raw model outputs and logs parse-failure substitutions; its
+banked numbers predate those fixes (see \S6.11). A validation
+programme in the same month added \texttt{code/pvi\_real/}: the
+controlled-panel study and adversarial suite, the CrowdTruth
+RelEx/RelDir pipelines with the cross-fitted calibrated aggregators,
+and the deep-analysis scripts; every number in \S6.13 recomputes
+from the summaries banked in \texttt{results/pvi\_real/}. In the calibration
+outputs, \textsc{NaiveMean} and \textsc{MajorityVote} are both
+assigned the vote fraction as their probability; their hard decisions
+coincide by the sign argument of \S6.7, so their probabilistic
+metrics are identical by construction.
 \par}

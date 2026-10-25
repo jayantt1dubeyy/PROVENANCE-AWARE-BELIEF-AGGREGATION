@@ -43,7 +43,7 @@ $\theta = \{(c_s, \rho_s, r_s)\}_{s=1}^N$ fixed, is:
 \begin{align}
 Y &\sim \mathrm{Bernoulli}(1/2) \\
 A_s &\sim P_A \quad \text{independently per source and round} \\
-R_s \mid Y &\sim \mathrm{Bernoulli}(r_s) \text{ on } \{Y\}, \text{ i.e.\ } P(R_s = Y \mid Y) = r_s \\
+R_s \mid Y & : \quad P(R_s = Y \mid Y) = r_s \\
 B_s &\sim \mathrm{Bernoulli}(\rho_s) \\
 M_s &= \begin{cases} f_{c_s}(R_s, A_s), & B_s = 1 \\ R_s, & B_s = 0 \end{cases}
 \end{align}
@@ -51,6 +51,30 @@ The receiver observes $(M_s, A_s)$ for each source. A \textbf{support set}
 of $K$ labelled triples $\{(M_s^{(k)}, A_s^{(k)}, Y^{(k)})\}_{k=1}^K$ per
 source is available for calibration; test queries are fresh draws from the
 same process with the same source parameters.
+
+\textbf{Relation to transition-matrix models.} Fix a source $s$ and a
+context $a$, and write the convention in XOR form
+$f_{c_s}(v,a) = v \oplus g_{c_s}(a)$ (every convention in our family has
+this form; only 8 of the 16 Boolean functions $g$ of two bits occur). The
+induced channel $Y \mapsto M_s$ is then a binary symmetric channel with
+error rate
+\[
+\varepsilon_a = \begin{cases} 1 - r_s, & g_{c_s}(a) = 0, \\
+(1-\rho_s)(1-r_s) + \rho_s r_s, & g_{c_s}(a) = 1, \end{cases}
+\]
+since in an unflipped context both branches transmit the reading, while in
+a flipped context the direct branch errs with probability $1-r_s$ and the
+convention branch with probability $r_s$. Per (source, context) the model
+is therefore a strict special case of the per-source, per-context
+transition matrices estimated in the crowdsourcing literature
+(Section~\ref{sec:related}): an unrestricted model has a free error rate
+for each (source, context) pair, while ours ties all contexts through the
+two scalars $(\rho_s, r_s)$ and one of eight flip patterns. The signed
+effective weight in context $a$ is
+$\lambda_a = \log\frac{1-\varepsilon_a}{\varepsilon_a}$: it equals
+$+\lambda_s$ in unflipped contexts, $0$ at $\rho_s = 1/2$ in flipped
+contexts, and $-\lambda_s$ only at $\rho_s = 1$.
+Theorem~\ref{thm:scalar} is a statement about this quantity.
 
 \subsection{Context assumptions}
 
@@ -61,6 +85,17 @@ and the support and test phases share the same $P_A$. No
 source chooses or influences the context. These assumptions matter for
 Theorem~\ref{thm:scalar}: $P_A$ must put positive mass on the convention's
 distinguishing inputs.
+
+\textbf{Edge cases.} With $K = 0$ the posterior of
+Section~\ref{sec:method} equals the prior and the predictive is the prior
+mixture; nothing in Sections~\ref{sec:theorems}--\ref{sec:method}
+requires $K \geq 1$ except the learned calibrators of
+Section~\ref{sec:experiments}, which is why all experiments use
+$K \geq 1$. Theorem~\ref{thm:consistency}'s predictive claim holds for
+$P_A$-almost every query context. The parameter ranges are open
+($r_s > 1/2$, $\rho_s > 0$) by design: at $r_s = 1/2$ a source carries no
+information, and at $\rho_s = 0$ its convention is never applied, so its
+contexts are indistinguishable.
 
 \subsection{Aggregation classes}
 

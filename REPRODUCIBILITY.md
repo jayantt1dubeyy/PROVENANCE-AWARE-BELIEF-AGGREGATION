@@ -4,7 +4,17 @@ Following AAMAS reproducibility guidelines.
 
 ## 1. Scope
 
-All experimental results in the paper can be reproduced by running:
+One-command artefact regeneration (tables, figures, PDF, distributable
+ZIP) from the banked result CSVs in `results/`:
+
+```bash
+bash reproduce.sh
+```
+
+This regenerates `results/tables_n100.tex` and `figures/*n100.*` from the
+CSVs, rebuilds `paper/main.pdf` with pdflatex, and copies the PDF and a
+working-tree ZIP to the goal files directory. It does not rerun the
+experiments themselves. Full experiment reruns:
 
 ```bash
 cd code
@@ -14,6 +24,50 @@ python make_figures.py
 
 The reported tables and figures correspond to the CSVs in results/ and the
 PNGs/PDFs in figures/.
+
+The n100 runs behind the paper's main tables are two invocations of
+`code/upgrade_n100.py`: `--only A --seeds 100` (Experiment A) and
+`--only BCE --seeds 30` (Experiments B, C, E). A single default run
+reproduces only a 10-seed subset of A and B and none of C or E.
+
+### Audit-repair addendum (October 2026)
+
+An independent audit of the paper and code (October 2026) found, among
+smaller items: a false-as-stated Theorem 2, one fabricated bibliography
+entry, a Dawid–Skene baseline that never iterated its E-step, and an
+EM-decoder ablation whose headline decomposition measured a dropped
+term in its own decision rule. The repair pass:
+
+- Theorem 2 restated with its missing hypotheses (log-odds form for
+  ρ > 0; decision form for ρ > 1/2 with a dominance condition), proof
+  rewritten; claims propagated to abstract, introduction, discussion,
+  and conclusion. Bibliography rebuilt from verified sources.
+- `code/audit_fixes/` holds the repair experiments, all reusing the
+  repository's own machinery on the banked protocols: the 30-seed
+  plug-in ablation (grid-MAP 0.7530 ± 0.0048, posterior-mean 0.7494 ±
+  0.0052, vs Bayes 0.7590 ± 0.0044), convention-recovery rates (grid
+  posterior MAP 0.640 ± 0.014; EM MAP 0.393 ± 0.014), the per-source
+  log-odds scalar (0.6207 ± 0.0041, decision-identical to
+  SignedScalar), the CtxLogReg support sweep (K=2: 0.534 → K=50:
+  0.713), and exact neural parameter counts (MetaAttn 25,667;
+  TransformerMeta 104,834). Outputs: `results/audit_fixes/`.
+- `code/real_world_cifar10h.py` now contains the genuine iterated
+  Dawid–Skene EM (kept in `code/audit_fixes/` as the repair record);
+  `results/real_world_cifar10h*.csv` are the fixed run's outputs. The
+  repair changes only the five-judgment DawidSkene figure (0.9846 →
+  0.9850). All CIFAR-10H descriptive statistics were recomputed from
+  the raw release and verified (514,200 judgments; 2,571 annotators;
+  exactly 200 per annotator; mean worker accuracy 0.9487).
+- `code/llm_benchmark.py` now saves raw model outputs
+  (`*_raw.jsonl`), counts parse-failure substitutions, and writes a
+  `*_meta.json` with the harness file's SHA-256, tying future results
+  to the exact code that produced them. The banked LLM numbers predate
+  these fixes and are labelled pre-fix-harness in the paper (§6.11).
+- `code/gen_tables_n100.py` fixed (a groupby iteration emitted one
+  duplicated row per method); `results/tables_n100.tex` regenerated.
+- The baseline named BetaBinomial in the code is renamed
+  ContextMatchFreq in the paper text; it is a context-matching
+  frequency rule, not a beta-binomial model.
 
 2. Randomness
 
@@ -38,9 +92,29 @@ PNGs/PDFs in figures/.
 
 3. Data
 
-No external datasets. All data is generated at runtime from the source model
-described in Section 3 of the paper. Generation parameters (reliability,
-stability, and convention ranges) are specified in pvi_experiments.py.
+No external datasets for the synthetic experiments. All data is generated
+at runtime from the source model described in Section 3 of the paper.
+Generation parameters (reliability, stability, and convention ranges) are
+specified in pvi_experiments.py.
+
+3a. Real-world study (CIFAR-10H). The genuine-human-judgment experiment in
+`code/real_world_cifar10h.py` needs the public annotator-level file
+`cifar10h-raw.csv`, shipped as `data/cifar10h-raw.zip` in the dataset
+repository https://github.com/jcpeterson/cifar-10h (Peterson, Battleday,
+Griffiths & Russakovsky, ICCV 2019). Point the `CIFAR10H_CSV` environment
+variable at your copy, or place it at `data/cifar10h-raw.csv` in this repo
+(the checked `/tmp/cifar10h/cifar10h-raw.csv` is a legacy fallback). The
+script splits the 10,000 images 50/50 with seed 0, fits per-worker
+confusion matrices on the estimation half, aggregates the evaluation
+half, and writes `results/real_world_cifar10h.csv` (all judgments) and
+`results/real_world_cifar10h_5judg.csv` (five judgments per image,
+subsample seed 1). Runtime is ~20 seconds on a CPU. Implementation notes:
+`BayesDirichlet` plugs Laplace-smoothed confusion-matrix estimates into a
+Bayesian prediction rule (it does not integrate over the posterior on the
+matrices); the Dawid–Skene routine is transductive over the evaluation
+images with the estimation-set confusion counts used as pseudocounts in
+every M-step (this warm start was a bug fix: an earlier version passed the
+estimation-fit matrices in but discarded them on the first M-step).
 
 4. Environment
 

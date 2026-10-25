@@ -24,8 +24,10 @@ on, so there is no continuous-to-discrete mismatch.
 $A_i = \mathbb{1}[f_c(M_i, a_i) = Y_i]$ indicate that decoding the message
 through convention $c$ recovers the truth, and
 $B_i = \mathbb{1}[M_i = Y_i]$ indicate direct agreement. With
-$q_i = \rho A_i + (1-\rho) B_i$ the probability the transmitted symbol
-matches the truth under $(c,\rho)$,
+$q_i = \rho A_i + (1-\rho) B_i$ --- a convex combination of the two
+observed indicators, not itself a probability: the per-example
+probability that the transmitted symbol matches the truth is
+$(1-r) + (2r-1)\,q_i$, as the likelihood shows ---
 \begin{equation}
 P(\mathcal{D}_s \mid c, \rho, r)
 = \prod_{i=1}^K \big[(1-r) + (2r-1)\, q_i\big].
@@ -37,6 +39,20 @@ $\rho \in \{0.5, 0.6, \ldots, 1.0\}$ and
 $r \in \{0.55, 0.60, \ldots, 0.95\}$. This is a numerical grid
 approximation, not a closed-form posterior, and we make no claim to the
 contrary.
+
+\begin{algorithm}[t]
+\caption{Grid-posterior aggregation for one source}
+\label{alg:grid}
+\begin{algorithmic}[1]
+\Require support set $\mathcal{D}_s = \{(M_i,a_i,Y_i)\}_{i=1}^K$; query $(M_q, a_q)$
+\For{each cell $(c,\rho,r)$ in $\mathcal{C} \times \{0.5,\dots,1.0\} \times \{0.55,\dots,0.95\}$}
+  \State $\ell(c,\rho,r) \gets \sum_{i=1}^K \log\big[(1-r) + (2r-1)q_i(c,\rho)\big]$
+\EndFor
+\State $P(c,\rho,r \mid \mathcal{D}_s) \gets \mathrm{softmax}(\ell)$ \Comment{uniform prior}
+\State $\mathrm{LO} \gets \log \dfrac{\sum_{c,\rho,r} P(c,\rho,r \mid \mathcal{D}_s)\, P(M_q \mid Y{=}1, c,\rho,r)}{\sum_{c,\rho,r} P(c,\rho,r \mid \mathcal{D}_s)\, P(M_q \mid Y{=}0, c,\rho,r)}$
+\State \Return $\hat{Y} = \mathbb{1}[\mathrm{LO} > 0]$ \Comment{ties resolve to $0$ in the implementation}
+\end{algorithmic}
+\end{algorithm}
 
 \textbf{Prediction.} For a query $(M_q, a_q)$, the predictive log-odds are
 the log of the ratio of posterior-averaged likelihoods:
@@ -53,4 +69,12 @@ log-odds. The two differ by Jensen's inequality, and only the form above
 is the exact Bayesian predictive. In the multi-agent setting, per-source
 predictive log-odds are summed, which is exact under the
 conditional-independence assumption of Section~\ref{sec:formal}; the
-oracle below is defined there as well.
+oracle below is defined there as well. One implementation detail:
+the code resolves exact ties ($\mathrm{LO} = 0$) deterministically
+to $\hat{Y} = 0$, whereas the fair-coin convention of
+Section~\ref{sec:formal} is used only in the theory of
+Section~\ref{sec:theorems} (Lemma~\ref{lem:equalrel}), where the
+$\tfrac12$ tie credit is part of the statement. Exact ties are
+isolated configurations except at $\rho = 0.5$ in flipped contexts,
+where a single source's log-odds contribution vanishes identically;
+all reported numbers use the implementation's rule.

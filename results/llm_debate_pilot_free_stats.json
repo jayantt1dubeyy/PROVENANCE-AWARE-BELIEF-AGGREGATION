@@ -1,0 +1,24 @@
+[
+ {
+  "Honest": {
+   "agree": 1.0,
+   "yes_rate": 0.8
+  },
+  "Contrarian": {
+   "agree": 0.8,
+   "yes_rate": 0.6
+  },
+  "Cautious": {
+   "agree": 0.8,
+   "yes_rate": 1.0
+  },
+  "Bold": {
+   "agree": 1.0,
+   "yes_rate": 0.8
+  },
+  "Sloppy": {
+   "agree": 0.8,
+   "yes_rate": 1.0
+  }
+ }
+]

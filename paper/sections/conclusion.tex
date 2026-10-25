@@ -2,12 +2,28 @@
 
 Scalar reliability weighting cannot implement the Bayes rule in two
 regimes: nonnegative weighting cannot invert a source (Theorem~1), and no
-context-independent scalar, of either sign, can represent a
-context-dependent convention (Theorem~2). The way out is to decode: our
+context-independent scalar can reproduce a source's context-varying
+Bayes log-odds contribution --- failing on decisions as well once
+stability exceeds $1/2$, where the effective sign itself flips with
+context (Theorem~2). The way out is to decode: our
 finite-grid Bayesian latent-convention aggregator outperforms the scalar
-baselines, is competitive with the learned calibrators we tested, and
-reaches within 4.0 points of the oracle at $N=12$---up to 38 points over
+baselines, matches or exceeds the learned calibrators we tested, and
+reaches within 4.3 points of the oracle at $N=12$---37.5 points over
 naive averaging. It survives candidate-set misspecification gracefully
-and is not disproportionately hurt by correlated source errors. Source
+and is not disproportionately hurt by correlated source errors. The
+independent validation programme (Section~\ref{sec:validation})
+carries the mechanism to real human judgments: where workers'
+behaviour measurably flips across recorded contexts, a calibrated
+context decoder beats the best calibrated scalar on accuracy, log
+loss and calibration across two tasks, and the adversarial suite
+marks the boundary---no edge when context only modulates
+reliability, and collapse for every support-based method when
+conventions switch between support and query. But
+decoding is not always worth its estimation cost: when conventions are
+unstable ($\rho=0.5$) a population-average mapping beats per-source
+decoding, with the advantage vanishing as support grows
+(Experiment~I)---a sharp, prescriptive boundary on when to decode. Its
+probabilities are well scored but overconfident at high convention
+stability. Source
 identity is not a reliability parameter bolted onto a message; it is part
 of the evidence-to-decision mapping.
