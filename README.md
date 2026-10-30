@@ -1,3 +1,7 @@
+![Provenance header](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=180&section=header&text=Provenance-Aware%20Belief%20Aggregation&fontSize=42&animation=fadeIn)
+
+![Typing](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F472B6&width=650&lines=Trust+needs+provenance,+not+just+weights.;190+seeds.+95%25+confidence+intervals.;When+to+decode:+the+stability+boundary.)
+
 # Provenance-Aware Belief Aggregation in Multi-Agent Communication
 
 > 🐼 New here? Start with the [beginner explainer](EXPLAINED_FOR_BEGINNERS.md) — plain language, one analogy, verified vs not-proved labels.
@@ -231,3 +235,36 @@ See REPRODUCIBILITY.md for the full checklist.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+---
+
+## 🗺️ Project map
+
+```mermaid
+flowchart TD
+    CODE["code/ — experimental suite (A–I, PVI-REAL, all baselines)"] --> RES["results/ — banked CSVs, 190 seeds"]
+    RES --> REPRO["reproduce.sh — one command, no rerun needed"]
+    REPRO --> FIG["figures/ — PNG + PDF"]
+    REPRO --> PAPER["paper/ — 17-page manuscript (main.tex → main.pdf)"]
+    CODE --> SMOKE["smoke_test.py + test_predictive_fix.py — ~10 s checks"]
+    NB["notebooks/pvi_colab.ipynb — Colab runner"] --> CODE
+    DOC["REPRODUCIBILITY.md — full checklist"] --> REPRO
+```
+
+## 📊 At a glance (verified 30 Oct 2026)
+
+| Measure | Value |
+|---|---|
+| Paper | Provenance-Aware Belief Aggregation in Multi-Agent Communication Under Convention Heterogeneity (Jayant Dubey) |
+| Manuscript | 17 pages, preprint-ready; venue plan: Zenodo preprint, then AAMAS 2027 workshops |
+| Core claim | Source-reliability weights fail when sources use different reporting conventions — decode the convention first |
+| Method | Finite-grid Bayesian latent-convention aggregator + structural limitation theorems |
+| Experiments | Ten: A–I plus PVI-REAL (§6.13, controlled panels + CrowdTruth RelEx/RelDir + adversarial failure map) |
+| Seeds | 190 banked (A: 100; B/C/E: 30 each), 95% confidence intervals, plus a 30-seed ρ×K boundary sweep |
+| Headlines | A (ρ=1.0) 0.7576±0.0021; B 0.7590±0.0044; C (K=50) 0.8204±0.0029; E (12 agents) 0.9489±0.0114 |
+| Consensus | 12 agents: +37.5pp over naive averaging, within 4.3pp of the oracle |
+| Stability boundary | At ρ=0.5 a population-average mapping beats per-source decoding; at ρ≥0.6 decoding wins decisively |
+| Conventions | 8 involutive mappings (identity, NOT, XOR with a1 / a2 / AND / OR / XOR / NOT-AND) |
+| Reproduce | `bash reproduce.sh` regenerates tables, figures, PDF from banked CSVs; full 190-seed rerun takes hours |
+| Compute | Reference: Google Colab T4 GPU; peak memory under 2 GB |
+| License | MIT |
